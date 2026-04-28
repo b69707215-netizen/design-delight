@@ -1,122 +1,98 @@
-import type { FormEvent, ReactNode } from "react";
+import { useEffect, useMemo, useState, type FormEvent, type ReactNode } from "react";
 import { Link } from "@tanstack/react-router";
+import type { User } from "@supabase/supabase-js";
 
 import { Button } from "@/components/ui/button";
+import { supabase } from "@/integrations/supabase/client";
+import { lovable } from "@/integrations/lovable";
+import { programs, translations, type Language } from "@/lib/academy-content";
+import { useLanguage } from "@/lib/use-language";
 
-const programs = [
-  {
-    mark: "01",
-    title: "Базовий старт",
-    lessons: "8 уроків",
-    price: "3600 грн",
-    text: "Правила, базова стратегія, тактика й перші впевнені партії.",
-  },
-  {
-    mark: "02",
-    title: "Перший хід",
-    lessons: "12 уроків",
-    price: "5400 грн",
-    text: "Дебюти, позиційна логіка та регулярна практика з наставником.",
-  },
-  {
-    mark: "03",
-    title: "Впевнений стратег",
-    lessons: "16 уроків",
-    price: "7000 грн",
-    text: "Глибший аналіз дебюту, мідлгейму й техніки закінчень.",
-  },
-  {
-    mark: "04",
-    title: "Турнірний форсаж",
-    lessons: "16 уроків",
-    price: "7500 грн",
-    text: "Підготовка до турнірів, розбір партій і психологія гри.",
-  },
-  {
-    mark: "05",
-    title: "Шлях гросмейстера",
-    lessons: "24 уроки",
-    price: "10500 грн",
-    text: "Елітна програма з персональним менторством та аналітикою.",
-  },
-];
+type Role = "student" | "teacher";
+type Payment = {
+  id: string;
+  program_title: string;
+  amount: number;
+  currency: string;
+  status: string;
+  provider: string;
+  paid_at: string | null;
+  created_at: string;
+};
 
-const audiences = [
-  {
-    symbol: "♙",
-    title: "Для дітей",
-    text: "Перетворюємо навчання на інтелектуальну пригоду, що розвиває увагу й мислення.",
-  },
-  {
-    symbol: "♘",
-    title: "Для дорослих",
-    text: "Допомагаємо почати з нуля або повернути форму через системний, спокійний прогрес.",
-  },
-  {
-    symbol: "♕",
-    title: "Для профі",
-    text: "Даємо інструменти серйозної підготовки: аналіз, репертуар і турнірна дисципліна.",
-  },
-];
-
-const advantages = [
-  ["Персональна стратегія", "Адаптуємо темп, цілі та план занять під кожного учня."],
-  ["Сучасна екосистема", "Поєднуємо класичну школу, інтерактивну практику та партійний аналіз."],
-  ["Глибока аналітика", "Показуємо не тільки помилки, а й логіку сильних рішень."],
-];
-
-function handleSubmit(event: FormEvent<HTMLFormElement>) {
-  event.preventDefault();
-  alert("Дякуємо за заявку! Ми невдовзі зв'яжемось з вами.");
-  event.currentTarget.reset();
+function localized<T extends { ru: string; en: string }>(value: T, language: Language) {
+  return value[language];
 }
 
 export function AcademyHeader() {
+  const { language, setLanguage } = useLanguage();
+  const t = translations[language];
+
   return (
     <header className="sticky top-0 z-50 border-b border-royal-border bg-background/85 px-5 py-4 backdrop-blur-xl md:px-10">
-      <div className="mx-auto flex max-w-7xl items-center justify-between gap-6">
+      <div className="mx-auto flex max-w-7xl items-center justify-between gap-4">
         <Link
           to="/"
-          className="font-display text-xl font-semibold tracking-[0.16em] text-gold md:text-2xl"
+          className="font-display text-lg font-semibold tracking-[0.16em] text-gold md:text-2xl"
         >
           ♔ GROSS ACADEMY
         </Link>
-        <nav className="hidden items-center gap-8 text-xs font-semibold uppercase tracking-[0.18em] text-cream md:flex">
+        <nav className="hidden items-center gap-6 text-xs font-semibold uppercase tracking-[0.18em] text-cream md:flex">
           <Link
             to="/"
             activeProps={{ className: "text-gold" }}
             className="transition-colors hover:text-gold"
           >
-            Головна
+            {t.nav.home}
           </Link>
           <Link
             to="/programs"
             activeProps={{ className: "text-gold" }}
             className="transition-colors hover:text-gold"
           >
-            Програми
+            {t.nav.programs}
           </Link>
           <Link
             to="/about"
             activeProps={{ className: "text-gold" }}
             className="transition-colors hover:text-gold"
           >
-            Про нас
+            {t.nav.about}
           </Link>
           <Link
             to="/contact"
             activeProps={{ className: "text-gold" }}
             className="transition-colors hover:text-gold"
           >
-            Контакт
+            {t.nav.contact}
+          </Link>
+          <Link
+            to="/dashboard"
+            activeProps={{ className: "text-gold" }}
+            className="transition-colors hover:text-gold"
+          >
+            {t.nav.cabinet}
           </Link>
         </nav>
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={() => setLanguage(language === "ru" ? "en" : "ru")}
+            className="rounded-md border border-royal-border bg-royal-surface px-3 py-2 text-xs font-semibold text-cream shadow-royal transition-colors hover:border-gold"
+          >
+            {language === "ru" ? "EN" : "RU"}
+          </button>
+          <Button asChild variant="royalOutline" size="sm">
+            <Link to="/login">{t.nav.login}</Link>
+          </Button>
+        </div>
       </div>
     </header>
   );
 }
 
 export function AcademyLayout({ children }: { children: ReactNode }) {
+  const { language } = useLanguage();
   return (
     <main className="min-h-screen overflow-hidden bg-background text-foreground">
       <AcademyHeader />
@@ -124,8 +100,14 @@ export function AcademyLayout({ children }: { children: ReactNode }) {
       <Footer />
       <button
         type="button"
-        onClick={() => alert("AI помічник: Привіт! Як я можу допомогти з GROSS ACADEMY?")}
-        aria-label="Відкрити чат"
+        onClick={() =>
+          alert(
+            language === "en"
+              ? "AI assistant: Hi! How can I help with GROSS ACADEMY?"
+              : "AI помощник: Привет! Как я могу помочь с GROSS ACADEMY?",
+          )
+        }
+        aria-label="Open chat"
         className="fixed bottom-6 right-6 z-50 grid size-16 place-items-center rounded-full bg-[image:var(--gradient-gold)] text-2xl text-gold-foreground shadow-gold transition-transform hover:scale-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
       >
         ♟
@@ -135,6 +117,9 @@ export function AcademyLayout({ children }: { children: ReactNode }) {
 }
 
 export function HomePage() {
+  const { language } = useLanguage();
+  const t = translations[language];
+
   return (
     <AcademyLayout>
       <section className="relative flex min-h-[720px] items-center justify-center px-5 py-20 text-center md:px-10">
@@ -142,20 +127,20 @@ export function HomePage() {
         <div className="absolute bottom-12 left-8 hidden h-56 w-40 rotate-12 border border-royal-border bg-royal-surface/40 shadow-royal animate-float md:block" />
         <div className="relative z-10 mx-auto max-w-5xl">
           <p className="mb-5 text-sm font-semibold uppercase tracking-[0.36em] text-gold">
-            Твій шлях до гросмейстерського рівня
+            {t.heroKicker}
           </p>
           <h1 className="text-balance font-display text-5xl font-semibold leading-tight tracking-[0.03em] text-cream md:text-7xl">
             ♔ GROSS ACADEMY
           </h1>
           <p className="mx-auto mt-7 max-w-2xl text-lg leading-8 text-warm-muted md:text-xl">
-            Навчися стратегії у майстрів спорту, мисли на кілька ходів уперед і перемагай упевнено.
+            {t.heroText}
           </p>
           <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
             <Button asChild variant="royal" size="lg">
-              <Link to="/contact">Записатися на урок</Link>
+              <Link to="/contact">{t.ctaTrial}</Link>
             </Button>
             <Button asChild variant="royalOutline" size="lg">
-              <Link to="/programs">Подивитись програми</Link>
+              <Link to="/programs">{t.ctaPrograms}</Link>
             </Button>
           </div>
           <AudienceGrid />
@@ -166,18 +151,19 @@ export function HomePage() {
 }
 
 function AudienceGrid() {
+  const { language } = useLanguage();
   return (
     <div className="mx-auto mt-16 grid max-w-5xl gap-5 md:grid-cols-3">
-      {audiences.map((item) => (
+      {translations[language].audiences.map(([symbol, title, text]) => (
         <article
-          key={item.title}
+          key={title}
           className="group rounded-xl border border-royal-border bg-royal-surface p-7 text-left shadow-royal transition-all hover:-translate-y-2 hover:border-gold hover:bg-royal-surface-strong"
         >
           <div className="mb-5 text-5xl text-gold transition-transform group-hover:scale-110">
-            {item.symbol}
+            {symbol}
           </div>
-          <h2 className="text-xl font-semibold text-gold">{item.title}</h2>
-          <p className="mt-3 text-sm leading-7 text-warm-muted">{item.text}</p>
+          <h2 className="text-xl font-semibold text-gold">{title}</h2>
+          <p className="mt-3 text-sm leading-7 text-warm-muted">{text}</p>
         </article>
       ))}
     </div>
@@ -185,49 +171,59 @@ function AudienceGrid() {
 }
 
 export function ProgramsPage() {
+  const { language } = useLanguage();
+  const t = translations[language];
   return (
     <AcademyLayout>
       <section className="mx-auto max-w-7xl px-5 py-20 md:px-10">
-        <SectionTitle kicker="Навчання" title="Програми шахового росту" />
+        <SectionTitle kicker={t.programsKicker} title={t.programsTitle} />
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {programs.map((program) => (
             <article
-              key={program.title}
+              key={program.slug}
               className="rounded-xl border border-royal-border bg-[image:var(--gradient-surface)] p-8 shadow-royal transition-all hover:-translate-y-2 hover:border-gold hover:shadow-gold"
             >
               <div className="text-sm font-semibold tracking-[0.35em] text-gold">
                 {program.mark}
               </div>
-              <h2 className="mt-8 text-2xl font-semibold text-gold">{program.title}</h2>
-              <p className="mt-2 text-sm text-warm-muted">{program.lessons}</p>
-              <p className="mt-5 text-3xl font-semibold text-cream">{program.price}</p>
-              <p className="mt-5 text-sm leading-7 text-warm-muted">{program.text}</p>
+              <h2 className="mt-8 text-2xl font-semibold text-gold">
+                {localized(program.title, language)}
+              </h2>
+              <p className="mt-2 text-sm text-warm-muted">{localized(program.lessons, language)}</p>
+              <p className="mt-5 text-3xl font-semibold text-cream">
+                {localized(program.price, language)}
+              </p>
+              <p className="mt-5 text-sm leading-7 text-warm-muted">
+                {localized(program.text, language)}
+              </p>
+              <Button asChild variant="royal" className="mt-7 w-full">
+                <Link to="/login">{language === "en" ? "Enroll" : "Записаться"}</Link>
+              </Button>
             </article>
           ))}
         </div>
-        <ContactForm compact title="Виберіть програму" />
+        <ContactForm compact title={t.chooseProgram} />
       </section>
     </AcademyLayout>
   );
 }
 
 export function AboutPage() {
+  const { language } = useLanguage();
+  const t = translations[language];
   return (
     <AcademyLayout>
       <section className="mx-auto grid max-w-7xl gap-12 px-5 py-20 md:grid-cols-[1.05fr_0.95fr] md:px-10">
         <div>
           <p className="text-sm font-semibold uppercase tracking-[0.32em] text-gold">
-            Про академію
+            {t.aboutKicker}
           </p>
           <h1 className="mt-5 text-4xl font-semibold leading-tight text-cream md:text-6xl">
-            Ми не вчимо просто пересувати фігури
+            {t.aboutTitle}
           </h1>
-          <p className="mt-7 text-lg leading-9 text-warm-muted">
-            Gross Academy — це екосистема інтелектуального розвитку, де шахи стають мовою
-            стратегічного мислення, дисципліни й впевнених рішень.
-          </p>
+          <p className="mt-7 text-lg leading-9 text-warm-muted">{t.aboutText}</p>
           <div className="mt-10 grid gap-5">
-            {advantages.map(([title, text]) => (
+            {t.advantages.map(([title, text]) => (
               <article key={title} className="border-l-4 border-gold bg-gold/5 p-5">
                 <h2 className="font-semibold text-gold">{title}</h2>
                 <p className="mt-2 text-sm leading-7 text-warm-muted">{text}</p>
@@ -244,17 +240,431 @@ export function AboutPage() {
 }
 
 export function ContactPage() {
+  const { language } = useLanguage();
+  const t = translations[language];
   return (
     <AcademyLayout>
       <section className="mx-auto max-w-4xl px-5 py-20 md:px-10">
-        <SectionTitle kicker="Запис" title="Залиш свої контакти" />
-        <ContactForm title="Пробний урок" />
+        <SectionTitle kicker={t.contactKicker} title={t.contactTitle} />
+        <ContactForm title={t.trialLesson} />
+      </section>
+    </AcademyLayout>
+  );
+}
+
+export function LoginPage() {
+  const { language, setLanguage } = useLanguage();
+  const t = translations[language];
+  const [mode, setMode] = useState<"signin" | "signup">("signin");
+  const [role, setRole] = useState<Role>("student");
+  const [fullName, setFullName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const copy =
+    language === "en"
+      ? {
+          title: "Personal account",
+          subtitle: "Sign in or create a student/teacher account.",
+          signin: "Sign in",
+          signup: "Create account",
+          password: "Password",
+          fullName: "Full name",
+          student: "Student",
+          teacher: "Teacher",
+          google: "Continue with Google",
+          success: "Check your email to confirm registration.",
+          error: "Something went wrong. Check details and try again.",
+        }
+      : {
+          title: "Личный кабинет",
+          subtitle: "Войдите или создайте кабинет ученика/учителя.",
+          signin: "Войти",
+          signup: "Создать аккаунт",
+          password: "Пароль",
+          fullName: "Полное имя",
+          student: "Ученик",
+          teacher: "Учитель",
+          google: "Продолжить с Google",
+          success: "Проверьте почту, чтобы подтвердить регистрацию.",
+          error: "Что-то пошло не так. Проверьте данные и попробуйте снова.",
+        };
+
+  async function saveProfile(userId: string) {
+    const name = fullName.trim() || email;
+    const { data: existing } = await supabase
+      .from("profiles")
+      .select("id")
+      .eq("user_id", userId)
+      .limit(1)
+      .maybeSingle();
+    if (existing) {
+      await supabase
+        .from("profiles")
+        .update({ full_name: name, preferred_language: language })
+        .eq("id", existing.id);
+    } else {
+      await supabase
+        .from("profiles")
+        .insert({ user_id: userId, full_name: name, preferred_language: language });
+    }
+    await supabase
+      .from("user_roles")
+      .upsert({ user_id: userId, role }, { onConflict: "user_id,role" });
+  }
+
+  async function handleAuth(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setLoading(true);
+    setMessage("");
+    try {
+      if (mode === "signup") {
+        const { data, error } = await supabase.auth.signUp({
+          email,
+          password,
+          options: { emailRedirectTo: window.location.origin + "/dashboard" },
+        });
+        if (error) throw error;
+        if (data.user && data.session) await saveProfile(data.user.id);
+        setMessage(copy.success);
+      } else {
+        const { error } = await supabase.auth.signInWithPassword({ email, password });
+        if (error) throw error;
+        window.location.href = "/dashboard";
+      }
+    } catch {
+      setMessage(copy.error);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  return (
+    <AcademyLayout>
+      <section className="mx-auto grid max-w-6xl gap-10 px-5 py-20 md:grid-cols-[0.9fr_1.1fr] md:px-10">
+        <div>
+          <p className="text-sm font-semibold uppercase tracking-[0.32em] text-gold">
+            GROSS ACADEMY
+          </p>
+          <h1 className="mt-5 text-4xl font-semibold text-cream md:text-6xl">{copy.title}</h1>
+          <p className="mt-6 text-lg leading-8 text-warm-muted">{copy.subtitle}</p>
+          <button
+            type="button"
+            onClick={() => setLanguage(language === "ru" ? "en" : "ru")}
+            className="mt-8 rounded-md border border-royal-border bg-royal-surface px-4 py-2 text-sm font-semibold text-cream shadow-royal hover:border-gold"
+          >
+            {language === "ru" ? "English" : "Русский"}
+          </button>
+        </div>
+        <form
+          onSubmit={handleAuth}
+          className="rounded-xl border border-royal-border bg-royal-surface-strong p-6 shadow-royal md:p-10"
+        >
+          <div className="mb-7 grid grid-cols-2 gap-3">
+            <Button
+              type="button"
+              variant={mode === "signin" ? "royal" : "royalOutline"}
+              onClick={() => setMode("signin")}
+            >
+              {copy.signin}
+            </Button>
+            <Button
+              type="button"
+              variant={mode === "signup" ? "royal" : "royalOutline"}
+              onClick={() => setMode("signup")}
+            >
+              {copy.signup}
+            </Button>
+          </div>
+          {mode === "signup" && (
+            <FormField
+              label={copy.fullName}
+              placeholder={copy.fullName}
+              value={fullName}
+              onChange={setFullName}
+            />
+          )}
+          <FormField
+            label="Email"
+            placeholder="your@email.com"
+            type="email"
+            value={email}
+            onChange={setEmail}
+          />
+          <FormField
+            label={copy.password}
+            placeholder="••••••••"
+            type="password"
+            value={password}
+            onChange={setPassword}
+          />
+          {mode === "signup" && (
+            <label className="mt-5 block text-sm font-semibold text-gold">
+              {language === "en" ? "Role" : "Роль"}
+              <select
+                value={role}
+                onChange={(event) => setRole(event.target.value as Role)}
+                className="mt-2 h-12 w-full rounded-md border border-royal-border bg-input px-4 text-cream focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              >
+                <option value="student">{copy.student}</option>
+                <option value="teacher">{copy.teacher}</option>
+              </select>
+            </label>
+          )}
+          {message && (
+            <p className="mt-5 rounded-md border border-royal-border bg-royal-surface p-4 text-sm text-warm-muted">
+              {message}
+            </p>
+          )}
+          <Button
+            disabled={loading}
+            type="submit"
+            variant="royal"
+            size="lg"
+            className="mt-8 w-full"
+          >
+            {mode === "signin" ? copy.signin : copy.signup}
+          </Button>
+          <Button
+            type="button"
+            variant="royalOutline"
+            size="lg"
+            className="mt-3 w-full"
+            onClick={() =>
+              lovable.auth.signInWithOAuth("google", {
+                redirect_uri: window.location.origin + "/dashboard",
+              })
+            }
+          >
+            {copy.google}
+          </Button>
+        </form>
+      </section>
+    </AcademyLayout>
+  );
+}
+
+export function DashboardPage() {
+  const { language, setLanguage } = useLanguage();
+  const [user, setUser] = useState<User | null>(null);
+  const [fullName, setFullName] = useState("");
+  const [role, setRole] = useState<Role>("student");
+  const [payments, setPayments] = useState<Payment[]>([]);
+  const [loading, setLoading] = useState(true);
+  const copy =
+    language === "en"
+      ? {
+          title: "My cabinet",
+          profile: "Profile",
+          payments: "Payment history",
+          name: "Full name",
+          role: "Role",
+          language: "Language",
+          save: "Save profile",
+          logout: "Log out",
+          empty: "Payments will appear here after checkout.",
+          signin: "Sign in to view your cabinet.",
+          student: "Student",
+          teacher: "Teacher",
+          amount: "Amount",
+          status: "Status",
+        }
+      : {
+          title: "Мой кабинет",
+          profile: "Профиль",
+          payments: "История оплат",
+          name: "Полное имя",
+          role: "Роль",
+          language: "Язык",
+          save: "Сохранить профиль",
+          logout: "Выйти",
+          empty: "Оплаты появятся здесь после оформления заказа.",
+          signin: "Войдите, чтобы открыть кабинет.",
+          student: "Ученик",
+          teacher: "Учитель",
+          amount: "Сумма",
+          status: "Статус",
+        };
+
+  useEffect(() => {
+    let mounted = true;
+    async function load() {
+      const { data: sessionData } = await supabase.auth.getSession();
+      const currentUser = sessionData.session?.user ?? null;
+      if (!mounted) return;
+      setUser(currentUser);
+      if (!currentUser) {
+        setLoading(false);
+        return;
+      }
+      const [{ data: profiles }, { data: roles }, { data: history }] = await Promise.all([
+        supabase
+          .from("profiles")
+          .select("id, full_name, preferred_language")
+          .eq("user_id", currentUser.id)
+          .limit(1),
+        supabase.from("user_roles").select("role").eq("user_id", currentUser.id).limit(1),
+        supabase
+          .from("payment_history")
+          .select("id, program_title, amount, currency, status, provider, paid_at, created_at")
+          .eq("user_id", currentUser.id)
+          .order("created_at", { ascending: false }),
+      ]);
+      const profile = profiles?.[0];
+      if (profile) {
+        setFullName(profile.full_name);
+        if (profile.preferred_language === "en" || profile.preferred_language === "ru")
+          setLanguage(profile.preferred_language);
+      } else {
+        await supabase.from("profiles").insert({
+          user_id: currentUser.id,
+          full_name: currentUser.email ?? "",
+          preferred_language: language,
+        });
+        setFullName(currentUser.email ?? "");
+      }
+      if (roles?.[0]?.role === "teacher" || roles?.[0]?.role === "student") setRole(roles[0].role);
+      setPayments((history ?? []) as Payment[]);
+      setLoading(false);
+    }
+    load();
+    return () => {
+      mounted = false;
+    };
+  }, [language, setLanguage]);
+
+  const roleLabel = useMemo(
+    () => (role === "teacher" ? copy.teacher : copy.student),
+    [role, copy.teacher, copy.student],
+  );
+
+  async function saveProfile(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (!user) return;
+    const { data: existing } = await supabase
+      .from("profiles")
+      .select("id")
+      .eq("user_id", user.id)
+      .limit(1)
+      .maybeSingle();
+    if (existing)
+      await supabase
+        .from("profiles")
+        .update({ full_name: fullName, preferred_language: language })
+        .eq("id", existing.id);
+    else
+      await supabase
+        .from("profiles")
+        .insert({ user_id: user.id, full_name: fullName, preferred_language: language });
+    await supabase.from("user_roles").delete().eq("user_id", user.id);
+    await supabase.from("user_roles").insert({ user_id: user.id, role });
+  }
+
+  async function logout() {
+    await supabase.auth.signOut();
+    window.location.href = "/";
+  }
+
+  return (
+    <AcademyLayout>
+      <section className="mx-auto max-w-7xl px-5 py-20 md:px-10">
+        <SectionTitle kicker={roleLabel} title={copy.title} />
+        {!user && !loading ? (
+          <div className="mx-auto max-w-xl rounded-xl border border-royal-border bg-royal-surface p-8 text-center shadow-royal">
+            <p className="text-warm-muted">{copy.signin}</p>
+            <Button asChild variant="royal" className="mt-6">
+              <Link to="/login">{translations[language].nav.login}</Link>
+            </Button>
+          </div>
+        ) : (
+          <div className="grid gap-6 lg:grid-cols-[0.85fr_1.15fr]">
+            <form
+              onSubmit={saveProfile}
+              className="rounded-xl border border-royal-border bg-royal-surface-strong p-6 shadow-royal md:p-8"
+            >
+              <h2 className="text-2xl font-semibold text-gold">{copy.profile}</h2>
+              <FormField
+                label={copy.name}
+                placeholder={copy.name}
+                value={fullName}
+                onChange={setFullName}
+              />
+              <label className="mt-5 block text-sm font-semibold text-gold">
+                {copy.role}
+                <select
+                  value={role}
+                  onChange={(event) => setRole(event.target.value as Role)}
+                  className="mt-2 h-12 w-full rounded-md border border-royal-border bg-input px-4 text-cream focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                >
+                  <option value="student">{copy.student}</option>
+                  <option value="teacher">{copy.teacher}</option>
+                </select>
+              </label>
+              <label className="mt-5 block text-sm font-semibold text-gold">
+                {copy.language}
+                <select
+                  value={language}
+                  onChange={(event) => setLanguage(event.target.value as Language)}
+                  className="mt-2 h-12 w-full rounded-md border border-royal-border bg-input px-4 text-cream focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                >
+                  <option value="ru">Русский</option>
+                  <option value="en">English</option>
+                </select>
+              </label>
+              <Button type="submit" variant="royal" size="lg" className="mt-8 w-full">
+                {copy.save}
+              </Button>
+              <Button
+                type="button"
+                variant="royalOutline"
+                size="lg"
+                className="mt-3 w-full"
+                onClick={logout}
+              >
+                {copy.logout}
+              </Button>
+            </form>
+            <div className="rounded-xl border border-royal-border bg-royal-surface p-6 shadow-royal md:p-8">
+              <h2 className="text-2xl font-semibold text-gold">{copy.payments}</h2>
+              <div className="mt-6 grid gap-4">
+                {payments.length === 0 ? (
+                  <p className="text-sm text-warm-muted">{copy.empty}</p>
+                ) : (
+                  payments.map((payment) => (
+                    <article
+                      key={payment.id}
+                      className="rounded-md border border-royal-border bg-royal-surface-strong p-5"
+                    >
+                      <div className="flex flex-wrap items-center justify-between gap-3">
+                        <h3 className="font-semibold text-cream">{payment.program_title}</h3>
+                        <span className="text-sm font-semibold text-gold">{payment.status}</span>
+                      </div>
+                      <p className="mt-3 text-sm text-warm-muted">
+                        {copy.amount}: {payment.amount} {payment.currency} · {payment.provider}
+                      </p>
+                    </article>
+                  ))
+                )}
+              </div>
+            </div>
+          </div>
+        )}
       </section>
     </AcademyLayout>
   );
 }
 
 function ContactForm({ title, compact = false }: { title: string; compact?: boolean }) {
+  const { language } = useLanguage();
+  const t = translations[language];
+  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    alert(t.form.success);
+    event.currentTarget.reset();
+  }
+
   return (
     <form
       onSubmit={handleSubmit}
@@ -263,27 +673,27 @@ function ContactForm({ title, compact = false }: { title: string; compact?: bool
       <h2 className="mb-7 text-center text-3xl font-semibold text-gold">{title}</h2>
       {compact && (
         <label className="mb-5 block text-sm font-semibold text-gold">
-          Програма
+          {t.form.program}
           <select
             required
             className="mt-2 h-12 w-full rounded-md border border-royal-border bg-input px-4 text-cream focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
           >
-            <option value="">Виберіть програму</option>
+            <option value="">{t.chooseProgram}</option>
             {programs.map((program) => (
-              <option key={program.title}>
-                {program.title} — {program.price}
+              <option key={program.slug}>
+                {localized(program.title, language)} — {localized(program.price, language)}
               </option>
             ))}
           </select>
         </label>
       )}
       <div className="grid gap-5 md:grid-cols-2">
-        <FormField label="Ім'я" placeholder="Ваше ім'я" />
-        <FormField label="Прізвище" placeholder="Ваше прізвище" />
+        <FormField label={t.form.name} placeholder={t.form.name} />
+        <FormField label={t.form.surname} placeholder={t.form.surname} />
       </div>
       <div className="mt-5 grid gap-5 md:grid-cols-2">
-        <FormField label="Ел. пошта" type="email" placeholder="your@email.com" />
-        <FormField label="Телефон" type="tel" placeholder="+38 (0XX) XXX-XX-XX" />
+        <FormField label={t.form.email} type="email" placeholder="your@email.com" />
+        <FormField label={t.form.phone} type="tel" placeholder="+38 (0XX) XXX-XX-XX" />
       </div>
       <Button
         type="submit"
@@ -291,7 +701,7 @@ function ContactForm({ title, compact = false }: { title: string; compact?: bool
         size="lg"
         className="mt-8 w-full uppercase tracking-[0.18em]"
       >
-        Надіслати
+        {t.form.submit}
       </Button>
     </form>
   );
@@ -301,17 +711,23 @@ function FormField({
   label,
   placeholder,
   type = "text",
+  value,
+  onChange,
 }: {
   label: string;
   placeholder: string;
   type?: string;
+  value?: string;
+  onChange?: (value: string) => void;
 }) {
   return (
-    <label className="block text-sm font-semibold text-gold">
+    <label className="mt-5 block text-sm font-semibold text-gold">
       {label} *
       <input
         required
         type={type}
+        value={value}
+        onChange={onChange ? (event) => onChange(event.target.value) : undefined}
         placeholder={placeholder}
         className="mt-2 h-12 w-full rounded-md border border-royal-border bg-input px-4 text-cream placeholder:text-warm-muted/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
       />
@@ -329,11 +745,14 @@ function SectionTitle({ kicker, title }: { kicker: string; title: string }) {
 }
 
 function Footer() {
+  const { language } = useLanguage();
   return (
     <footer className="border-t border-royal-border px-5 py-12 text-center text-warm-muted md:px-10">
       <h2 className="text-2xl font-semibold tracking-[0.18em] text-gold">GROSS ACADEMY</h2>
-      <p className="mt-3">Твій шлях до гросмейстерського рівня</p>
-      <p className="mt-6 text-xs">© 2026 Gross Academy. Усі права захищені.</p>
+      <p className="mt-3">{translations[language].footer}</p>
+      <p className="mt-6 text-xs">
+        © 2026 Gross Academy. {language === "en" ? "All rights reserved." : "Все права защищены."}
+      </p>
     </footer>
   );
 }
