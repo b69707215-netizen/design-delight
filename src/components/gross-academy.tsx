@@ -1,4 +1,4 @@
-import type { FormEvent } from "react";
+import type { FormEvent, ReactNode } from "react";
 import { Link } from "@tanstack/react-router";
 
 import { Button } from "@/components/ui/button";
@@ -47,7 +47,7 @@ export function AcademyHeader() {
   );
 }
 
-export function AcademyLayout({ children }: { children: React.ReactNode }) {
+export function AcademyLayout({ children }: { children: ReactNode }) {
   return (
     <main className="min-h-screen overflow-hidden bg-background text-foreground">
       <AcademyHeader />
