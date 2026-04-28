@@ -207,9 +207,8 @@ export function LoginPage() {
         if (data.user && data.session) await saveProfile(data.user.id);
         setMessage(copy.success);
       } else {
-        const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+        const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
-        if (data.user) await saveProfile(data.user.id);
         window.location.href = "/dashboard";
       }
     } catch {
@@ -305,7 +304,8 @@ export function DashboardPage() {
     const { data: existing } = await supabase.from("profiles").select("id").eq("user_id", user.id).limit(1).maybeSingle();
     if (existing) await supabase.from("profiles").update({ full_name: fullName, preferred_language: language }).eq("id", existing.id);
     else await supabase.from("profiles").insert({ user_id: user.id, full_name: fullName, preferred_language: language });
-    await supabase.from("user_roles").upsert({ user_id: user.id, role }, { onConflict: "user_id,role" });
+    await supabase.from("user_roles").delete().eq("user_id", user.id);
+    await supabase.from("user_roles").insert({ user_id: user.id, role });
   }
 
   async function logout() {
