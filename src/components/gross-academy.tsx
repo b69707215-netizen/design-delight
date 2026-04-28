@@ -533,7 +533,7 @@ export function DashboardPage() {
     return () => {
       mounted = false;
     };
-  }, []);
+  }, [language, setLanguage]);
 
   const roleLabel = useMemo(
     () => (role === "teacher" ? copy.teacher : copy.student),
