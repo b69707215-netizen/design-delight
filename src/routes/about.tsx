@@ -5,13 +5,12 @@ import { AboutPage } from "@/components/gross-academy";
 export const Route = createFileRoute("/about")({
   head: () => ({
     meta: [
-      { title: "Про академію — Gross Academy" },
+      { title: "О академии — Gross Academy" },
       {
         name: "description",
-        content:
-          "Gross Academy навчає стратегічному мисленню через шахи, персональні програми та аналітику партій.",
+        content: "Премиальная шахматная школа с индивидуальным подходом и современной экосистемой обучения.",
       },
-      { property: "og:title", content: "Про академію — Gross Academy" },
+      { property: "og:title", content: "О академии — Gross Academy" },
       {
         property: "og:description",
         content:

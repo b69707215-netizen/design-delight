@@ -5,13 +5,12 @@ import { ProgramsPage } from "@/components/gross-academy";
 export const Route = createFileRoute("/programs")({
   head: () => ({
     meta: [
-      { title: "Програми навчання — Gross Academy" },
+      { title: "Программы обучения — Gross Academy" },
       {
         name: "description",
-        content:
-          "Курси Gross Academy: від базового старту до турнірної та гросмейстерської підготовки.",
+        content: "Выберите шахматную программу по уровню, целям и темпу обучения.",
       },
-      { property: "og:title", content: "Програми навчання — Gross Academy" },
+      { property: "og:title", content: "Программы обучения — Gross Academy" },
       {
         property: "og:description",
         content: "Обери шахову програму за рівнем, цілями та темпом навчання.",
