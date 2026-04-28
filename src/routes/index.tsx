@@ -8,7 +8,8 @@ export const Route = createFileRoute("/")({
       { title: "Gross Academy — шахматная школа" },
       {
         name: "description",
-        content: "Обучение шахматам с мастерами спорта, персональными программами и турнирной подготовкой.",
+        content:
+          "Обучение шахматам с мастерами спорта, персональными программами и турнирной подготовкой.",
       },
       { property: "og:title", content: "Gross Academy — шахматная школа" },
       {
