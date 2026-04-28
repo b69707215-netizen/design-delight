@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import type { Language } from "./academy-content";
 
@@ -10,10 +10,10 @@ export function useLanguage() {
     if (stored === "en" || stored === "ru") setLanguageState(stored);
   }, []);
 
-  const setLanguage = (next: Language) => {
+  const setLanguage = useCallback((next: Language) => {
     setLanguageState(next);
     window.localStorage.setItem("gross-academy-language", next);
-  };
+  }, []);
 
   return { language, setLanguage };
 }
