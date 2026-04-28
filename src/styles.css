@@ -102,7 +102,9 @@
   --royal-surface: oklch(0.16 0.025 67 / 82%);
   --royal-surface-strong: oklch(0.2 0.034 67 / 92%);
   --royal-border: oklch(0.78 0.13 86 / 32%);
-  --gradient-page: radial-gradient(circle at 75% 8%, oklch(0.78 0.13 86 / 16%), transparent 34%), linear-gradient(180deg, oklch(0.09 0.012 70), oklch(0.14 0.024 67) 42%, oklch(0.08 0.01 70));
+  --gradient-page:
+    radial-gradient(circle at 75% 8%, oklch(0.78 0.13 86 / 16%), transparent 34%),
+    linear-gradient(180deg, oklch(0.09 0.012 70), oklch(0.14 0.024 67) 42%, oklch(0.08 0.01 70));
   --gradient-gold: linear-gradient(135deg, oklch(0.78 0.13 86), oklch(0.88 0.12 93));
   --gradient-surface: linear-gradient(135deg, oklch(0.2 0.034 67 / 86%), oklch(0.13 0.02 67 / 76%));
   --shadow-royal: 0 26px 70px -38px oklch(0 0 0 / 90%);
@@ -180,7 +182,8 @@
 }
 
 @keyframes royal-pulse {
-  0%, 100% {
+  0%,
+  100% {
     opacity: 0.5;
     transform: translate3d(0, 0, 0) scale(1);
   }
@@ -191,7 +194,8 @@
 }
 
 @keyframes float {
-  0%, 100% {
+  0%,
+  100% {
     transform: translateY(0);
   }
   50% {

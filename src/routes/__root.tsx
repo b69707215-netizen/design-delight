@@ -30,10 +30,17 @@ export const Route = createRootRoute({
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: "Gross Academy — шахова школа" },
-      { name: "description", content: "Преміальна шахова академія для дітей, дорослих і професійних гравців." },
+      {
+        name: "description",
+        content: "Преміальна шахова академія для дітей, дорослих і професійних гравців.",
+      },
       { name: "author", content: "Gross Academy" },
       { property: "og:title", content: "Gross Academy — шахова школа" },
-      { property: "og:description", content: "Навчання шахам із майстрами спорту, персональними програмами та турнірною підготовкою." },
+      {
+        property: "og:description",
+        content:
+          "Навчання шахам із майстрами спорту, персональними програмами та турнірною підготовкою.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
       { name: "twitter:site", content: "@Lovable" },
