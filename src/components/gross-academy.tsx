@@ -518,13 +518,11 @@ export function DashboardPage() {
         if (profile.preferred_language === "en" || profile.preferred_language === "ru")
           setLanguage(profile.preferred_language);
       } else {
-        await supabase
-          .from("profiles")
-          .insert({
-            user_id: currentUser.id,
-            full_name: currentUser.email ?? "",
-            preferred_language: language,
-          });
+        await supabase.from("profiles").insert({
+          user_id: currentUser.id,
+          full_name: currentUser.email ?? "",
+          preferred_language: language,
+        });
         setFullName(currentUser.email ?? "");
       }
       if (roles?.[0]?.role === "teacher" || roles?.[0]?.role === "student") setRole(roles[0].role);
