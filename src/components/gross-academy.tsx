@@ -542,13 +542,14 @@ export function DashboardPage({ scope = "auto" }: { scope?: DashboardScope }) {
         supabase.from("user_roles").select("role").eq("user_id", currentUser.id).limit(1),
         supabase
           .from("payment_history")
-          .select("id, program_title, lessons_purchased, amount, currency, status, provider, paid_at, created_at")
+          .select(
+            "id, program_title, lessons_purchased, amount, currency, status, provider, paid_at, created_at",
+          )
           .eq("user_id", currentUser.id)
           .order("created_at", { ascending: false }),
       ]);
       const profile = profiles?.[0];
-      const metadataLanguage =
-        currentUser.user_metadata?.preferred_language === "en" ? "en" : "uk";
+      const metadataLanguage = currentUser.user_metadata?.preferred_language === "en" ? "en" : "uk";
       const metadataRole = currentUser.user_metadata?.role === "teacher" ? "teacher" : "student";
       if (profile) {
         setFullName(profile.full_name);
@@ -569,13 +570,20 @@ export function DashboardPage({ scope = "auto" }: { scope?: DashboardScope }) {
         await supabase.from("user_roles").insert({ user_id: currentUser.id, role: metadataRole });
         setRole(metadataRole);
       }
-      const activeRole = roles?.[0]?.role === "teacher" || roles?.[0]?.role === "student" ? roles[0].role : metadataRole;
+      const activeRole =
+        roles?.[0]?.role === "teacher" || roles?.[0]?.role === "student"
+          ? roles[0].role
+          : metadataRole;
       if (scope === "auto") {
-        window.location.replace(activeRole === "teacher" ? "/teacher-dashboard" : "/student-dashboard");
+        window.location.replace(
+          activeRole === "teacher" ? "/teacher-dashboard" : "/student-dashboard",
+        );
         return;
       }
       if (scope !== activeRole) {
-        window.location.replace(activeRole === "teacher" ? "/teacher-dashboard" : "/student-dashboard");
+        window.location.replace(
+          activeRole === "teacher" ? "/teacher-dashboard" : "/student-dashboard",
+        );
         return;
       }
       setPayments((history ?? []) as Payment[]);
@@ -616,7 +624,8 @@ export function DashboardPage({ scope = "auto" }: { scope?: DashboardScope }) {
     await supabase.from("user_roles").insert({ user_id: user.id, role });
     setFullName(name);
     setProfileMessage(copy.saved);
-    if (scope !== "auto") window.location.replace(role === "teacher" ? "/teacher-dashboard" : "/student-dashboard");
+    if (scope !== "auto")
+      window.location.replace(role === "teacher" ? "/teacher-dashboard" : "/student-dashboard");
   }
 
   async function logout() {
@@ -712,7 +721,8 @@ export function DashboardPage({ scope = "auto" }: { scope?: DashboardScope }) {
                         <span className="text-sm font-semibold text-gold">{payment.status}</span>
                       </div>
                       <p className="mt-3 text-sm text-warm-muted">
-                        {copy.amount}: {payment.amount} {payment.currency} · {copy.lessons}: {payment.lessons_purchased} · {payment.provider}
+                        {copy.amount}: {payment.amount} {payment.currency} · {copy.lessons}:{" "}
+                        {payment.lessons_purchased} · {payment.provider}
                       </p>
                     </article>
                   ))
@@ -785,7 +795,9 @@ export function PaymentHistoryPage({
       }
       const { data } = await supabase
         .from("payment_history")
-        .select("id, program_title, lessons_purchased, amount, currency, status, provider, paid_at, created_at")
+        .select(
+          "id, program_title, lessons_purchased, amount, currency, status, provider, paid_at, created_at",
+        )
         .eq("user_id", currentUser.id)
         .order("created_at", { ascending: false });
       if (!mounted) return;
@@ -882,7 +894,8 @@ export function PaymentHistoryPage({
                         <span className="text-sm font-semibold text-gold">{copy[normalized]}</span>
                       </div>
                       <p className="mt-3 text-sm text-warm-muted">
-                        {copy.amount}: {payment.amount} {payment.currency} · {copy.lessons}: {payment.lessons_purchased} · {payment.provider}
+                        {copy.amount}: {payment.amount} {payment.currency} · {copy.lessons}:{" "}
+                        {payment.lessons_purchased} · {payment.provider}
                       </p>
                     </article>
                   );
@@ -1026,7 +1039,9 @@ export function CuratorChatPage() {
                   >
                     <p className="text-sm leading-6 text-cream">{item.message}</p>
                     <time className="mt-2 block text-xs text-warm-muted">
-                      {new Date(item.created_at).toLocaleString(language === "en" ? "en-US" : "uk-UA")}
+                      {new Date(item.created_at).toLocaleString(
+                        language === "en" ? "en-US" : "uk-UA",
+                      )}
                     </time>
                   </article>
                 ))
