@@ -31,7 +31,7 @@ function subscribe(callback: () => void) {
 }
 
 export function useLanguage() {
-  const language = useSyncExternalStore(subscribe, getSnapshot, () => "uk");
+  const language = useSyncExternalStore<Language>(subscribe, getSnapshot, () => "uk");
 
   const setLanguage = useCallback((next: Language) => {
     window.localStorage.setItem(storageKey, next);
