@@ -1,22 +1,41 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useSyncExternalStore } from "react";
 
 import type { Language } from "./academy-content";
 
-export function useLanguage() {
-  const [language, setLanguageState] = useState<Language>("uk");
+const storageKey = "gross-academy-language";
+const languageChangedEvent = "gross-academy-language-changed";
 
-  useEffect(() => {
-    const stored = window.localStorage.getItem("gross-academy-language");
-    if (stored === "en" || stored === "uk") setLanguageState(stored);
-    if (stored === "ru") {
-      setLanguageState("uk");
-      window.localStorage.setItem("gross-academy-language", "uk");
-    }
-  }, []);
+function normalizeLanguage(value: string | null): Language {
+  return value === "en" ? "en" : "uk";
+}
+
+function getSnapshot(): Language {
+  if (typeof window === "undefined") return "uk";
+  const stored = window.localStorage.getItem(storageKey);
+  if (stored === "ru") {
+    window.localStorage.setItem(storageKey, "uk");
+    return "uk";
+  }
+  return normalizeLanguage(stored);
+}
+
+function subscribe(callback: () => void) {
+  if (typeof window === "undefined") return () => undefined;
+
+  window.addEventListener("storage", callback);
+  window.addEventListener(languageChangedEvent, callback);
+  return () => {
+    window.removeEventListener("storage", callback);
+    window.removeEventListener(languageChangedEvent, callback);
+  };
+}
+
+export function useLanguage() {
+  const language = useSyncExternalStore(subscribe, getSnapshot, () => "uk");
 
   const setLanguage = useCallback((next: Language) => {
-    setLanguageState(next);
-    window.localStorage.setItem("gross-academy-language", next);
+    window.localStorage.setItem(storageKey, next);
+    window.dispatchEvent(new Event(languageChangedEvent));
   }, []);
 
   return { language, setLanguage };
