@@ -472,7 +472,7 @@ export function DashboardPage({ scope = "auto" }: { scope?: DashboardScope }) {
     language === "en"
       ? {
           title: "My cabinet",
-          profile: "Profile",
+          profile: "Profile settings",
           payments: "Payment history",
           name: "Full name",
           role: "Role",
@@ -490,7 +490,7 @@ export function DashboardPage({ scope = "auto" }: { scope?: DashboardScope }) {
         }
       : {
           title: "Мій кабінет",
-          profile: "Профіль",
+          profile: "Налаштування профілю",
           payments: "Історія оплат",
           name: "Повне ім’я",
           role: "Роль",
