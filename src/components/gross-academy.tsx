@@ -472,6 +472,7 @@ export function DashboardPage({ scope = "auto" }: { scope?: DashboardScope }) {
           language: "Language",
           save: "Save profile",
           saved: "Profile changes saved.",
+          openPayments: "Open payment history",
           logout: "Log out",
           empty: "Payments will appear here after checkout.",
           signin: "Sign in to view your cabinet.",
@@ -489,6 +490,7 @@ export function DashboardPage({ scope = "auto" }: { scope?: DashboardScope }) {
           language: "Мова",
           save: "Зберегти профіль",
           saved: "Зміни профілю збережено.",
+          openPayments: "Відкрити історію оплат",
           logout: "Вийти",
           empty: "Оплати з’являться тут після оформлення замовлення.",
           signin: "Увійдіть, щоб відкрити кабінет.",
@@ -653,6 +655,9 @@ export function DashboardPage({ scope = "auto" }: { scope?: DashboardScope }) {
               )}
               <Button type="submit" variant="royal" size="lg" className="mt-8 w-full">
                 {copy.save}
+              </Button>
+              <Button asChild variant="royalOutline" size="lg" className="mt-3 w-full">
+                <Link to="/payment-history">{copy.openPayments}</Link>
               </Button>
               <Button
                 type="button"
