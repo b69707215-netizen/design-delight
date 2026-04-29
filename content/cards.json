@@ -1,0 +1,22 @@
+{
+  "$schema": "./schemas/cards.schema.json",
+  "version": 1,
+  "updatedAt": "2026-04-29T00:00:00.000Z",
+  "cards": [
+    {
+      "slug": "opening-basics",
+      "type": "guide",
+      "title": { "uk": "Основи дебюту", "en": "Opening basics" },
+      "summary": {
+        "uk": "Коротка картка про принципи швидкого розвитку фігур і контролю центру.",
+        "en": "A short card about fast piece development and center control."
+      },
+      "mdxPath": "content/cards/opening-basics.mdx",
+      "imageAlt": { "uk": "Шахова дошка з відкритим дебютом", "en": "Chess board with an opening position" },
+      "programSlug": "basic-start",
+      "isActive": true,
+      "sortOrder": 10,
+      "publishedAt": "2026-04-29T00:00:00.000Z"
+    }
+  ]
+}

@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gross-academy.local/schemas/programs.schema.json",
+  "title": "Gross Academy Programs",
+  "type": "object",
+  "required": ["version", "updatedAt", "programs"],
+  "additionalProperties": false,
+  "properties": {
+    "version": { "type": "integer", "minimum": 1 },
+    "updatedAt": { "type": "string", "format": "date-time" },
+    "programs": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["mark", "slug", "amount", "lessonsCount", "title", "lessons", "price", "text"],
+        "additionalProperties": false,
+        "properties": {
+          "mark": { "type": "string", "minLength": 1, "maxLength": 8 },
+          "slug": { "type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$" },
+          "amount": { "type": "integer", "minimum": 0 },
+          "currency": { "type": "string", "default": "UAH", "minLength": 3, "maxLength": 3 },
+          "lessonsCount": { "type": "integer", "minimum": 0 },
+          "title": { "$ref": "#/$defs/localizedText" },
+          "lessons": { "$ref": "#/$defs/localizedText" },
+          "price": { "$ref": "#/$defs/localizedText" },
+          "text": { "$ref": "#/$defs/localizedText" },
+          "isActive": { "type": "boolean", "default": true },
+          "sortOrder": { "type": "integer", "minimum": 0 }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "localizedText": {
+      "type": "object",
+      "required": ["uk", "en"],
+      "additionalProperties": false,
+      "properties": {
+        "uk": { "type": "string", "minLength": 1 },
+        "en": { "type": "string", "minLength": 1 }
+      }
+    }
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gross-academy.local/schemas/cards.schema.json",
+  "title": "Gross Academy Content Cards",
+  "type": "object",
+  "required": ["version", "updatedAt", "cards"],
+  "additionalProperties": false,
+  "properties": {
+    "version": { "type": "integer", "minimum": 1 },
+    "updatedAt": { "type": "string", "format": "date-time" },
+    "cards": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["slug", "type", "title", "summary"],
+        "additionalProperties": false,
+        "properties": {
+          "slug": { "type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$" },
+          "type": { "type": "string", "enum": ["article", "lesson", "news", "guide", "event"] },
+          "title": { "$ref": "#/$defs/localizedText" },
+          "summary": { "$ref": "#/$defs/localizedText" },
+          "mdxPath": { "type": "string", "pattern": "^content/cards/[a-z0-9-]+\\.mdx$" },
+          "imageAlt": { "$ref": "#/$defs/localizedText" },
+          "programSlug": { "type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$" },
+          "isActive": { "type": "boolean", "default": true },
+          "sortOrder": { "type": "integer", "minimum": 0 },
+          "publishedAt": { "type": "string", "format": "date-time" }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "localizedText": {
+      "type": "object",
+      "required": ["uk", "en"],
+      "additionalProperties": false,
+      "properties": {
+        "uk": { "type": "string", "minLength": 1 },
+        "en": { "type": "string", "minLength": 1 }
+      }
+    }
+  }
+}
