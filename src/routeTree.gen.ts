@@ -15,6 +15,7 @@ import { Route as ProgramsRouteImport } from './routes/programs'
 import { Route as PaymentHistoryRouteImport } from './routes/payment-history'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as DashboardRouteImport } from './routes/dashboard'
+import { Route as CuratorChatRouteImport } from './routes/curator-chat'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
@@ -49,6 +50,11 @@ const DashboardRoute = DashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CuratorChatRoute = CuratorChatRouteImport.update({
+  id: '/curator-chat',
+  path: '/curator-chat',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ContactRoute = ContactRouteImport.update({
   id: '/contact',
   path: '/contact',
@@ -69,6 +75,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/contact': typeof ContactRoute
+  '/curator-chat': typeof CuratorChatRoute
   '/dashboard': typeof DashboardRoute
   '/login': typeof LoginRoute
   '/payment-history': typeof PaymentHistoryRoute
@@ -80,6 +87,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/contact': typeof ContactRoute
+  '/curator-chat': typeof CuratorChatRoute
   '/dashboard': typeof DashboardRoute
   '/login': typeof LoginRoute
   '/payment-history': typeof PaymentHistoryRoute
@@ -92,6 +100,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/contact': typeof ContactRoute
+  '/curator-chat': typeof CuratorChatRoute
   '/dashboard': typeof DashboardRoute
   '/login': typeof LoginRoute
   '/payment-history': typeof PaymentHistoryRoute
@@ -105,6 +114,7 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/contact'
+    | '/curator-chat'
     | '/dashboard'
     | '/login'
     | '/payment-history'
@@ -116,6 +126,7 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/contact'
+    | '/curator-chat'
     | '/dashboard'
     | '/login'
     | '/payment-history'
@@ -127,6 +138,7 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/contact'
+    | '/curator-chat'
     | '/dashboard'
     | '/login'
     | '/payment-history'
@@ -139,6 +151,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
   ContactRoute: typeof ContactRoute
+  CuratorChatRoute: typeof CuratorChatRoute
   DashboardRoute: typeof DashboardRoute
   LoginRoute: typeof LoginRoute
   PaymentHistoryRoute: typeof PaymentHistoryRoute
@@ -191,6 +204,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/curator-chat': {
+      id: '/curator-chat'
+      path: '/curator-chat'
+      fullPath: '/curator-chat'
+      preLoaderRoute: typeof CuratorChatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/contact': {
       id: '/contact'
       path: '/contact'
@@ -219,6 +239,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
   ContactRoute: ContactRoute,
+  CuratorChatRoute: CuratorChatRoute,
   DashboardRoute: DashboardRoute,
   LoginRoute: LoginRoute,
   PaymentHistoryRoute: PaymentHistoryRoute,
