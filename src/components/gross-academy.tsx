@@ -9,6 +9,7 @@ import { programs, translations, type Language } from "@/lib/academy-content";
 import { useLanguage } from "@/lib/use-language";
 
 type Role = "student" | "teacher";
+type DashboardScope = Role | "auto";
 type Payment = {
   id: string;
   program_title: string;
@@ -449,7 +450,7 @@ export function LoginPage() {
   );
 }
 
-export function DashboardPage() {
+export function DashboardPage({ scope = "auto" }: { scope?: DashboardScope }) {
   const { language, setLanguage } = useLanguage();
   const [user, setUser] = useState<User | null>(null);
   const [fullName, setFullName] = useState("");
@@ -541,6 +542,15 @@ export function DashboardPage() {
         await supabase.from("user_roles").insert({ user_id: currentUser.id, role: metadataRole });
         setRole(metadataRole);
       }
+      const activeRole = roles?.[0]?.role === "teacher" || roles?.[0]?.role === "student" ? roles[0].role : metadataRole;
+      if (scope === "auto") {
+        window.location.replace(activeRole === "teacher" ? "/teacher-dashboard" : "/student-dashboard");
+        return;
+      }
+      if (scope !== activeRole) {
+        window.location.replace(activeRole === "teacher" ? "/teacher-dashboard" : "/student-dashboard");
+        return;
+      }
       setPayments((history ?? []) as Payment[]);
       setLoading(false);
     }
@@ -548,7 +558,7 @@ export function DashboardPage() {
     return () => {
       mounted = false;
     };
-  }, [setLanguage]);
+  }, [scope, setLanguage]);
 
   const roleLabel = useMemo(
     () => (role === "teacher" ? copy.teacher : copy.student),
@@ -579,6 +589,7 @@ export function DashboardPage() {
     await supabase.from("user_roles").insert({ user_id: user.id, role });
     setFullName(name);
     setProfileMessage(copy.saved);
+    if (scope !== "auto") window.location.replace(role === "teacher" ? "/teacher-dashboard" : "/student-dashboard");
   }
 
   async function logout() {
