@@ -217,7 +217,9 @@ export function ProgramsPage() {
                 {localized(program.text, language)}
               </p>
               <Button asChild variant="royal" className="mt-7 w-full">
-                <Link to="/login">{language === "en" ? "Enroll" : "Записатися"}</Link>
+                <a href={program.paymentUrl} target="_blank" rel="noreferrer">
+                  {language === "en" ? "Pay" : "Оплатити"}
+                </a>
               </Button>
             </article>
           ))}
