@@ -1,0 +1,39 @@
+{
+  "$schema": "./schemas/programs.schema.json",
+  "version": 1,
+  "updatedAt": "2026-04-29T00:00:00.000Z",
+  "programs": [
+    {
+      "mark": "01",
+      "slug": "basic-start",
+      "amount": 3600,
+      "currency": "UAH",
+      "lessonsCount": 8,
+      "title": { "uk": "Базовий старт", "en": "Basic Start" },
+      "lessons": { "uk": "8 уроків", "en": "8 lessons" },
+      "price": { "uk": "3600 грн", "en": "UAH 3,600" },
+      "text": {
+        "uk": "Правила, базова стратегія, тактика та перші впевнені партії.",
+        "en": "Rules, core strategy, tactics, and the first confident games."
+      },
+      "isActive": true,
+      "sortOrder": 10
+    },
+    {
+      "mark": "02",
+      "slug": "first-move",
+      "amount": 5400,
+      "currency": "UAH",
+      "lessonsCount": 12,
+      "title": { "uk": "Перший хід", "en": "First Move" },
+      "lessons": { "uk": "12 уроків", "en": "12 lessons" },
+      "price": { "uk": "5400 грн", "en": "UAH 5,400" },
+      "text": {
+        "uk": "Дебюти, позиційна логіка та регулярна практика з наставником.",
+        "en": "Openings, positional logic, and regular practice with a mentor."
+      },
+      "isActive": true,
+      "sortOrder": 20
+    }
+  ]
+}
