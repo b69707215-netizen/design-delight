@@ -5,15 +5,15 @@ import { DashboardPage } from "@/components/gross-academy";
 export const Route = createFileRoute("/dashboard")({
   head: () => ({
     meta: [
-      { title: "Кабинет — Gross Academy" },
+      { title: "Кабінет — Gross Academy" },
       {
         name: "description",
-        content: "Профиль, язык и история оплат ученика или учителя Gross Academy.",
+        content: "Профіль, мова та історія оплат учня або вчителя Gross Academy.",
       },
-      { property: "og:title", content: "Кабинет — Gross Academy" },
+      { property: "og:title", content: "Кабінет — Gross Academy" },
       {
         property: "og:description",
-        content: "Просматривайте профиль, роль, язык и историю оплат.",
+        content: "Переглядайте профіль, роль, мову та історію оплат.",
       },
     ],
   }),
