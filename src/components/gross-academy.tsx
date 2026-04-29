@@ -28,6 +28,13 @@ function localized<T extends Record<Language, string>>(value: T, language: Langu
   return value[language];
 }
 
+function normalizePaymentStatus(status: string): Exclude<PaymentStatusFilter, "all"> {
+  const value = status.toLowerCase();
+  if (["paid", "success", "succeeded", "complete", "completed"].includes(value)) return "paid";
+  if (["canceled", "cancelled", "failed", "refunded"].includes(value)) return "canceled";
+  return "pending";
+}
+
 export function AcademyHeader() {
   const { language, setLanguage } = useLanguage();
   const t = translations[language];
