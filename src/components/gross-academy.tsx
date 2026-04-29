@@ -936,7 +936,7 @@ export function CuratorChatPage() {
     }
     const studentId = activeRole === "student" ? currentUser.id : activePeerId.trim();
     const teacherId = activeRole === "teacher" ? currentUser.id : activePeerId.trim();
-    const { data } = await (supabase as any)
+    const { data } = await supabase
       .from("curator_chat_messages")
       .select("id, student_id, teacher_id, sender_id, message, created_at")
       .eq("student_id", studentId)
@@ -981,7 +981,7 @@ export function CuratorChatPage() {
     if (!user || !peerId.trim() || !message.trim()) return;
     const studentId = role === "student" ? user.id : peerId.trim();
     const teacherId = role === "teacher" ? user.id : peerId.trim();
-    await (supabase as any).from("curator_chat_messages").insert({
+    await supabase.from("curator_chat_messages").insert({
       student_id: studentId,
       teacher_id: teacherId,
       sender_id: user.id,
