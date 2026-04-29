@@ -706,6 +706,174 @@ export function DashboardPage({ scope = "auto" }: { scope?: DashboardScope }) {
   );
 }
 
+export function PaymentHistoryPage({
+  course,
+  status,
+}: {
+  course: string;
+  status: PaymentStatusFilter;
+}) {
+  const { language } = useLanguage();
+  const [user, setUser] = useState<User | null>(null);
+  const [payments, setPayments] = useState<Payment[]>([]);
+  const [loading, setLoading] = useState(true);
+  const copy =
+    language === "en"
+      ? {
+          title: "Payment history",
+          kicker: "Cabinet",
+          course: "Course",
+          status: "Status",
+          allCourses: "All courses",
+          allStatuses: "All statuses",
+          paid: "Successful",
+          canceled: "Canceled",
+          pending: "Pending",
+          amount: "Amount",
+          empty: "No payments match these filters.",
+          signin: "Sign in to view your payment history.",
+          back: "Back to cabinet",
+        }
+      : {
+          title: "Історія оплат",
+          kicker: "Кабінет",
+          course: "Курс",
+          status: "Статус",
+          allCourses: "Усі курси",
+          allStatuses: "Усі статуси",
+          paid: "Успішно",
+          canceled: "Скасовано",
+          pending: "В очікуванні",
+          amount: "Сума",
+          empty: "За цими фільтрами оплат немає.",
+          signin: "Увійдіть, щоб переглянути історію оплат.",
+          back: "Назад до кабінету",
+        };
+
+  useEffect(() => {
+    let mounted = true;
+    async function load() {
+      const { data: sessionData } = await supabase.auth.getSession();
+      const currentUser = sessionData.session?.user ?? null;
+      if (!mounted) return;
+      setUser(currentUser);
+      if (!currentUser) {
+        setLoading(false);
+        return;
+      }
+      const { data } = await supabase
+        .from("payment_history")
+        .select("id, program_title, amount, currency, status, provider, paid_at, created_at")
+        .eq("user_id", currentUser.id)
+        .order("created_at", { ascending: false });
+      if (!mounted) return;
+      setPayments((data ?? []) as Payment[]);
+      setLoading(false);
+    }
+    load();
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  const courseOptions = useMemo(
+    () => Array.from(new Set(payments.map((payment) => payment.program_title))).sort(),
+    [payments],
+  );
+  const filteredPayments = payments.filter((payment) => {
+    const matchesCourse = !course || payment.program_title === course;
+    const matchesStatus = status === "all" || normalizePaymentStatus(payment.status) === status;
+    return matchesCourse && matchesStatus;
+  });
+
+  return (
+    <AcademyLayout>
+      <section className="mx-auto max-w-7xl px-5 py-20 md:px-10">
+        <SectionTitle kicker={copy.kicker} title={copy.title} />
+        {!user && !loading ? (
+          <div className="mx-auto max-w-xl rounded-xl border border-royal-border bg-royal-surface p-8 text-center shadow-royal">
+            <p className="text-warm-muted">{copy.signin}</p>
+            <Button asChild variant="royal" className="mt-6">
+              <Link to="/login">{translations[language].nav.login}</Link>
+            </Button>
+          </div>
+        ) : (
+          <div className="rounded-xl border border-royal-border bg-royal-surface p-6 shadow-royal md:p-8">
+            <div className="grid gap-4 md:grid-cols-[1fr_1fr_auto]">
+              <label className="block text-sm font-semibold text-gold">
+                {copy.course}
+                <select
+                  value={course}
+                  onChange={(event) => {
+                    const params = new URLSearchParams(window.location.search);
+                    if (event.target.value) params.set("course", event.target.value);
+                    else params.delete("course");
+                    window.location.search = params.toString();
+                  }}
+                  className="mt-2 h-12 w-full rounded-md border border-royal-border bg-input px-4 text-cream focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                >
+                  <option value="">{copy.allCourses}</option>
+                  {courseOptions.map((title) => (
+                    <option key={title} value={title}>
+                      {title}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <label className="block text-sm font-semibold text-gold">
+                {copy.status}
+                <select
+                  value={status}
+                  onChange={(event) => {
+                    const params = new URLSearchParams(window.location.search);
+                    const next = event.target.value;
+                    if (next === "all") params.delete("status");
+                    else params.set("status", next);
+                    window.location.search = params.toString();
+                  }}
+                  className="mt-2 h-12 w-full rounded-md border border-royal-border bg-input px-4 text-cream focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                >
+                  {paymentStatuses.map((value) => (
+                    <option key={value} value={value}>
+                      {value === "all" ? copy.allStatuses : copy[value]}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <Button asChild variant="royalOutline" className="self-end">
+                <Link to="/dashboard">{copy.back}</Link>
+              </Button>
+            </div>
+            <div className="mt-8 grid gap-4">
+              {filteredPayments.length === 0 ? (
+                <p className="text-sm text-warm-muted">{copy.empty}</p>
+              ) : (
+                filteredPayments.map((payment) => {
+                  const normalized = normalizePaymentStatus(payment.status);
+                  return (
+                    <article
+                      key={payment.id}
+                      className="rounded-md border border-royal-border bg-royal-surface-strong p-5"
+                    >
+                      <div className="flex flex-wrap items-center justify-between gap-3">
+                        <h2 className="font-semibold text-cream">{payment.program_title}</h2>
+                        <span className="text-sm font-semibold text-gold">{copy[normalized]}</span>
+                      </div>
+                      <p className="mt-3 text-sm text-warm-muted">
+                        {copy.amount}: {payment.amount} {payment.currency} · {payment.provider}
+                      </p>
+                    </article>
+                  );
+                })
+              )}
+            </div>
+          </div>
+        )}
+      </section>
+    </AcademyLayout>
+  );
+}
+
 function ContactForm({ title, compact = false }: { title: string; compact?: boolean }) {
   const { language } = useLanguage();
   const t = translations[language];
