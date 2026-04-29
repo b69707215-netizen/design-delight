@@ -14,6 +14,7 @@ export const programs = [
       uk: "Правила, базова стратегія, тактика та перші впевнені партії.",
       en: "Rules, core strategy, tactics, and the first confident games.",
     },
+    paymentUrl: "https://send.monobank.ua/x4tqEX7wv?a=3600",
   },
   {
     mark: "02",
@@ -26,6 +27,7 @@ export const programs = [
       uk: "Дебюти, позиційна логіка та регулярна практика з наставником.",
       en: "Openings, positional logic, and regular practice with a mentor.",
     },
+    paymentUrl: "https://send.monobank.ua/x4tqEX7wv?a=5400",
   },
   {
     mark: "03",
@@ -38,6 +40,7 @@ export const programs = [
       uk: "Глибокий аналіз дебюту, мітельшпілю та техніки ендшпілю.",
       en: "Deeper opening, middlegame, and endgame technique analysis.",
     },
+    paymentUrl: "https://send.monobank.ua/x4tqEX7wv?a=7000",
   },
   {
     mark: "04",
@@ -50,6 +53,7 @@ export const programs = [
       uk: "Підготовка до турнірів, розбір партій та психологія гри.",
       en: "Tournament preparation, game review, and chess psychology.",
     },
+    paymentUrl: "https://send.monobank.ua/x4tqEX7wv",
   },
   {
     mark: "05",
@@ -62,6 +66,33 @@ export const programs = [
       uk: "Елітна програма з персональним менторством та аналітикою.",
       en: "Elite training with personal mentorship and advanced analytics.",
     },
+    paymentUrl: "https://send.monobank.ua/x4tqEX7wv?a=10500",
+  },
+  {
+    mark: "06",
+    slug: "group-lesson",
+    amount: 250,
+    title: { uk: "Груповий урок", en: "Group Lesson" },
+    lessons: { uk: "1 груповий урок", en: "1 group lesson" },
+    price: { uk: "250 грн", en: "UAH 250" },
+    text: {
+      uk: "Живе групове заняття з практикою, задачами та розбором типових позицій.",
+      en: "A live group session with practice, puzzles, and typical position review.",
+    },
+    paymentUrl: "https://send.monobank.ua/x4tqEX7wv?a=250",
+  },
+  {
+    mark: "07",
+    slug: "individual-lesson",
+    amount: 500,
+    title: { uk: "Індивідуальний урок", en: "Individual Lesson" },
+    lessons: { uk: "1 індивідуальний урок", en: "1 individual lesson" },
+    price: { uk: "500 грн", en: "UAH 500" },
+    text: {
+      uk: "Персональне заняття з тренером під ваш рівень, цілі та темп навчання.",
+      en: "A personal coach session adapted to your level, goals, and pace.",
+    },
+    paymentUrl: "https://send.monobank.ua/x4tqEX7wv?a=500",
   },
 ] as const satisfies ReadonlyArray<{
   mark: string;
@@ -71,6 +102,7 @@ export const programs = [
   lessons: LocalizedText;
   price: LocalizedText;
   text: LocalizedText;
+  paymentUrl: string;
 }>;
 
 export const translations = {
