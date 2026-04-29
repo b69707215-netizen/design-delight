@@ -21,6 +21,14 @@ type Payment = {
   paid_at: string | null;
   created_at: string;
 };
+type ChatMessage = {
+  id: string;
+  student_id: string;
+  teacher_id: string;
+  sender_id: string;
+  message: string;
+  created_at: string;
+};
 
 const paymentStatuses: PaymentStatusFilter[] = ["all", "paid", "canceled", "pending"];
 
@@ -480,6 +488,7 @@ export function DashboardPage({ scope = "auto" }: { scope?: DashboardScope }) {
           save: "Save profile",
           saved: "Profile changes saved.",
           openPayments: "Open payment history",
+          openChat: "Open curator chat",
           logout: "Log out",
           empty: "Payments will appear here after checkout.",
           signin: "Sign in to view your cabinet.",
@@ -498,6 +507,7 @@ export function DashboardPage({ scope = "auto" }: { scope?: DashboardScope }) {
           save: "Зберегти профіль",
           saved: "Зміни профілю збережено.",
           openPayments: "Відкрити історію оплат",
+          openChat: "Відкрити чат з куратором",
           logout: "Вийти",
           empty: "Оплати з’являться тут після оформлення замовлення.",
           signin: "Увійдіть, щоб відкрити кабінет.",
@@ -667,6 +677,9 @@ export function DashboardPage({ scope = "auto" }: { scope?: DashboardScope }) {
                 <Link to="/payment-history" search={{ course: "", status: "all" }}>
                   {copy.openPayments}
                 </Link>
+              </Button>
+              <Button asChild variant="royalOutline" size="lg" className="mt-3 w-full">
+                <Link to="/curator-chat">{copy.openChat}</Link>
               </Button>
               <Button
                 type="button"
