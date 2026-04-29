@@ -355,7 +355,7 @@ export function LoginPage() {
             onClick={() => setLanguage(language === "uk" ? "en" : "uk")}
             className="mt-8 rounded-md border border-royal-border bg-royal-surface px-4 py-2 text-sm font-semibold text-cream shadow-royal hover:border-gold"
           >
-            {language === "ru" ? "English" : "Українська"}
+            {language === "uk" ? "English" : "Українська"}
           </button>
         </div>
         <form
