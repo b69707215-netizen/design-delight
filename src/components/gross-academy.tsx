@@ -889,6 +889,168 @@ export function PaymentHistoryPage({
   );
 }
 
+export function CuratorChatPage() {
+  const { language } = useLanguage();
+  const [user, setUser] = useState<User | null>(null);
+  const [role, setRole] = useState<Role>("student");
+  const [peerId, setPeerId] = useState("");
+  const [message, setMessage] = useState("");
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [loading, setLoading] = useState(true);
+  const copy =
+    language === "en"
+      ? {
+          kicker: "Cabinet",
+          title: "Curator chat",
+          peer: "Curator or student ID",
+          placeholder: "Paste the profile user ID",
+          message: "Message",
+          send: "Send",
+          empty: "Messages will appear here after the first reply.",
+          signin: "Sign in to open the curator chat.",
+          back: "Back to cabinet",
+        }
+      : {
+          kicker: "Кабінет",
+          title: "Чат з куратором",
+          peer: "ID куратора або учня",
+          placeholder: "Вставте user ID профілю",
+          message: "Повідомлення",
+          send: "Надіслати",
+          empty: "Повідомлення з’являться тут після першої відповіді.",
+          signin: "Увійдіть, щоб відкрити чат з куратором.",
+          back: "Назад до кабінету",
+        };
+
+  async function loadMessages(currentUser: User, activeRole: Role, activePeerId: string) {
+    if (!activePeerId.trim()) {
+      setMessages([]);
+      return;
+    }
+    const studentId = activeRole === "student" ? currentUser.id : activePeerId.trim();
+    const teacherId = activeRole === "teacher" ? currentUser.id : activePeerId.trim();
+    const { data } = await (supabase as any)
+      .from("curator_chat_messages")
+      .select("id, student_id, teacher_id, sender_id, message, created_at")
+      .eq("student_id", studentId)
+      .eq("teacher_id", teacherId)
+      .order("created_at", { ascending: true });
+    setMessages((data ?? []) as ChatMessage[]);
+  }
+
+  useEffect(() => {
+    let mounted = true;
+    async function load() {
+      const { data: sessionData } = await supabase.auth.getSession();
+      const currentUser = sessionData.session?.user ?? null;
+      if (!mounted) return;
+      setUser(currentUser);
+      if (!currentUser) {
+        setLoading(false);
+        return;
+      }
+      const { data: roles } = await supabase
+        .from("user_roles")
+        .select("role")
+        .eq("user_id", currentUser.id)
+        .limit(1);
+      const activeRole = roles?.[0]?.role === "teacher" ? "teacher" : "student";
+      setRole(activeRole);
+      setLoading(false);
+    }
+    load();
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!user) return;
+    loadMessages(user, role, peerId);
+  }, [user, role, peerId]);
+
+  async function sendMessage(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (!user || !peerId.trim() || !message.trim()) return;
+    const studentId = role === "student" ? user.id : peerId.trim();
+    const teacherId = role === "teacher" ? user.id : peerId.trim();
+    await (supabase as any).from("curator_chat_messages").insert({
+      student_id: studentId,
+      teacher_id: teacherId,
+      sender_id: user.id,
+      message: message.trim(),
+    });
+    setMessage("");
+    await loadMessages(user, role, peerId);
+  }
+
+  return (
+    <AcademyLayout>
+      <section className="mx-auto max-w-5xl px-5 py-20 md:px-10">
+        <SectionTitle kicker={copy.kicker} title={copy.title} />
+        {!user && !loading ? (
+          <div className="mx-auto max-w-xl rounded-xl border border-royal-border bg-royal-surface p-8 text-center shadow-royal">
+            <p className="text-warm-muted">{copy.signin}</p>
+            <Button asChild variant="royal" className="mt-6">
+              <Link to="/login">{translations[language].nav.login}</Link>
+            </Button>
+          </div>
+        ) : (
+          <div className="rounded-xl border border-royal-border bg-royal-surface p-6 shadow-royal md:p-8">
+            <label className="block text-sm font-semibold text-gold">
+              {copy.peer}
+              <input
+                value={peerId}
+                onChange={(event) => setPeerId(event.target.value)}
+                placeholder={copy.placeholder}
+                className="mt-2 h-12 w-full rounded-md border border-royal-border bg-input px-4 text-cream placeholder:text-warm-muted/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              />
+            </label>
+            <div className="mt-6 grid min-h-80 gap-4 rounded-md border border-royal-border bg-royal-surface-strong p-4">
+              {messages.length === 0 ? (
+                <p className="self-center text-center text-sm text-warm-muted">{copy.empty}</p>
+              ) : (
+                messages.map((item) => (
+                  <article
+                    key={item.id}
+                    className={`max-w-[82%] rounded-md border border-royal-border p-4 ${
+                      item.sender_id === user?.id ? "ml-auto bg-gold/10" : "bg-royal-surface"
+                    }`}
+                  >
+                    <p className="text-sm leading-6 text-cream">{item.message}</p>
+                    <time className="mt-2 block text-xs text-warm-muted">
+                      {new Date(item.created_at).toLocaleString(language === "en" ? "en-US" : "uk-UA")}
+                    </time>
+                  </article>
+                ))
+              )}
+            </div>
+            <form onSubmit={sendMessage} className="mt-5 grid gap-4">
+              <label className="block text-sm font-semibold text-gold">
+                {copy.message}
+                <textarea
+                  required
+                  value={message}
+                  onChange={(event) => setMessage(event.target.value)}
+                  className="mt-2 min-h-28 w-full rounded-md border border-royal-border bg-input px-4 py-3 text-cream placeholder:text-warm-muted/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                />
+              </label>
+              <div className="flex flex-col gap-3 sm:flex-row">
+                <Button type="submit" variant="royal" className="flex-1">
+                  {copy.send}
+                </Button>
+                <Button asChild variant="royalOutline" className="flex-1">
+                  <Link to="/dashboard">{copy.back}</Link>
+                </Button>
+              </div>
+            </form>
+          </div>
+        )}
+      </section>
+    </AcademyLayout>
+  );
+}
+
 function ContactForm({ title, compact = false }: { title: string; compact?: boolean }) {
   const { language } = useLanguage();
   const t = translations[language];
