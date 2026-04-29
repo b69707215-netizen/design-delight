@@ -53,6 +53,7 @@ export type Database = {
           created_at: string
           currency: string
           id: string
+          lessons_purchased: number
           paid_at: string | null
           program_title: string
           provider: string
@@ -65,6 +66,7 @@ export type Database = {
           created_at?: string
           currency?: string
           id?: string
+          lessons_purchased?: number
           paid_at?: string | null
           program_title: string
           provider?: string
@@ -77,6 +79,7 @@ export type Database = {
           created_at?: string
           currency?: string
           id?: string
+          lessons_purchased?: number
           paid_at?: string | null
           program_title?: string
           provider?: string
