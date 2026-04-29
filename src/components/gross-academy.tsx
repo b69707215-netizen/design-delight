@@ -632,6 +632,11 @@ export function DashboardPage() {
                   <option value="en">English</option>
                 </select>
               </label>
+              {profileMessage && (
+                <p className="mt-5 rounded-md border border-royal-border bg-royal-surface p-4 text-sm text-warm-muted">
+                  {profileMessage}
+                </p>
+              )}
               <Button type="submit" variant="royal" size="lg" className="mt-8 w-full">
                 {copy.save}
               </Button>
