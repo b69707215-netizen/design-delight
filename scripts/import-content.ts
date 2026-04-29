@@ -32,6 +32,7 @@ const programSchema = z.object({
   lessons: localizedTextSchema,
   price: localizedTextSchema,
   text: localizedTextSchema,
+  paymentUrl: z.string().url().optional(),
   isActive: z.boolean().default(true),
   sortOrder: z.number().int().min(0).default(0),
 });
