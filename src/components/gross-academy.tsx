@@ -679,7 +679,7 @@ export function DashboardPage({ scope = "auto" }: { scope?: DashboardScope }) {
                 </Link>
               </Button>
               <Button asChild variant="royalOutline" size="lg" className="mt-3 w-full">
-                <Link to="/curator-chat">{copy.openChat}</Link>
+                <a href="/curator-chat">{copy.openChat}</a>
               </Button>
               <Button
                 type="button"
