@@ -455,6 +455,7 @@ export function DashboardPage() {
   const [fullName, setFullName] = useState("");
   const [role, setRole] = useState<Role>("student");
   const [payments, setPayments] = useState<Payment[]>([]);
+  const [profileMessage, setProfileMessage] = useState("");
   const [loading, setLoading] = useState(true);
   const copy =
     language === "en"
@@ -466,6 +467,7 @@ export function DashboardPage() {
           role: "Role",
           language: "Language",
           save: "Save profile",
+          saved: "Profile changes saved.",
           logout: "Log out",
           empty: "Payments will appear here after checkout.",
           signin: "Sign in to view your cabinet.",
@@ -482,6 +484,7 @@ export function DashboardPage() {
           role: "Роль",
           language: "Мова",
           save: "Зберегти профіль",
+          saved: "Зміни профілю збережено.",
           logout: "Вийти",
           empty: "Оплати з’являться тут після оформлення замовлення.",
           signin: "Увійдіть, щоб відкрити кабінет.",
@@ -516,6 +519,9 @@ export function DashboardPage() {
           .order("created_at", { ascending: false }),
       ]);
       const profile = profiles?.[0];
+      const metadataLanguage =
+        currentUser.user_metadata?.preferred_language === "en" ? "en" : "uk";
+      const metadataRole = currentUser.user_metadata?.role === "teacher" ? "teacher" : "student";
       if (profile) {
         setFullName(profile.full_name);
         if (profile.preferred_language === "en" || profile.preferred_language === "uk")
@@ -524,12 +530,17 @@ export function DashboardPage() {
       } else {
         await supabase.from("profiles").insert({
           user_id: currentUser.id,
-          full_name: currentUser.email ?? "",
-          preferred_language: language,
+          full_name: currentUser.user_metadata?.full_name || currentUser.email || "",
+          preferred_language: metadataLanguage,
         });
-        setFullName(currentUser.email ?? "");
+        setFullName(currentUser.user_metadata?.full_name || currentUser.email || "");
+        setLanguage(metadataLanguage);
       }
       if (roles?.[0]?.role === "teacher" || roles?.[0]?.role === "student") setRole(roles[0].role);
+      else {
+        await supabase.from("user_roles").insert({ user_id: currentUser.id, role: metadataRole });
+        setRole(metadataRole);
+      }
       setPayments((history ?? []) as Payment[]);
       setLoading(false);
     }
@@ -537,7 +548,7 @@ export function DashboardPage() {
     return () => {
       mounted = false;
     };
-  }, [language, setLanguage]);
+  }, [setLanguage]);
 
   const roleLabel = useMemo(
     () => (role === "teacher" ? copy.teacher : copy.student),
@@ -547,6 +558,8 @@ export function DashboardPage() {
   async function saveProfile(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!user) return;
+    setProfileMessage("");
+    const name = fullName.trim() || user.email || "";
     const { data: existing } = await supabase
       .from("profiles")
       .select("id")
@@ -556,14 +569,16 @@ export function DashboardPage() {
     if (existing)
       await supabase
         .from("profiles")
-        .update({ full_name: fullName, preferred_language: language })
+        .update({ full_name: name, preferred_language: language })
         .eq("id", existing.id);
     else
       await supabase
         .from("profiles")
-        .insert({ user_id: user.id, full_name: fullName, preferred_language: language });
+        .insert({ user_id: user.id, full_name: name, preferred_language: language });
     await supabase.from("user_roles").delete().eq("user_id", user.id);
     await supabase.from("user_roles").insert({ user_id: user.id, role });
+    setFullName(name);
+    setProfileMessage(copy.saved);
   }
 
   async function logout() {
