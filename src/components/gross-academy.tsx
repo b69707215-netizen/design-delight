@@ -10,6 +10,7 @@ import { useLanguage } from "@/lib/use-language";
 
 type Role = "student" | "teacher";
 type DashboardScope = Role | "auto";
+export type PaymentStatusFilter = "all" | "paid" | "canceled" | "pending";
 type Payment = {
   id: string;
   program_title: string;
@@ -20,6 +21,8 @@ type Payment = {
   paid_at: string | null;
   created_at: string;
 };
+
+const paymentStatuses: PaymentStatusFilter[] = ["all", "paid", "canceled", "pending"];
 
 function localized<T extends Record<Language, string>>(value: T, language: Language) {
   return value[language];
