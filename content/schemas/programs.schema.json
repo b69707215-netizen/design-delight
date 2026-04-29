@@ -25,6 +25,7 @@
           "lessons": { "$ref": "#/$defs/localizedText" },
           "price": { "$ref": "#/$defs/localizedText" },
           "text": { "$ref": "#/$defs/localizedText" },
+          "paymentUrl": { "type": "string", "format": "uri" },
           "isActive": { "type": "boolean", "default": true },
           "sortOrder": { "type": "integer", "minimum": 0 }
         }
