@@ -324,7 +324,10 @@ export function LoginPage() {
         const { data, error } = await supabase.auth.signUp({
           email,
           password,
-          options: { emailRedirectTo: window.location.origin + "/dashboard" },
+          options: {
+            emailRedirectTo: window.location.origin + "/dashboard",
+            data: { full_name: fullName.trim(), role, preferred_language: language },
+          },
         });
         if (error) throw error;
         if (data.user && data.session) await saveProfile(data.user.id);
