@@ -14,6 +14,104 @@ export type Database = {
   }
   public: {
     Tables: {
+      content_import_runs: {
+        Row: {
+          after_sha: string | null
+          before_sha: string | null
+          commit_sha: string | null
+          completed_at: string | null
+          delivery_id: string | null
+          errors_count: number
+          id: string
+          ref: string | null
+          repo_full_name: string | null
+          report: Json
+          source: string
+          status: string
+          triggered_at: string
+          warnings_count: number
+        }
+        Insert: {
+          after_sha?: string | null
+          before_sha?: string | null
+          commit_sha?: string | null
+          completed_at?: string | null
+          delivery_id?: string | null
+          errors_count?: number
+          id?: string
+          ref?: string | null
+          repo_full_name?: string | null
+          report?: Json
+          source?: string
+          status?: string
+          triggered_at?: string
+          warnings_count?: number
+        }
+        Update: {
+          after_sha?: string | null
+          before_sha?: string | null
+          commit_sha?: string | null
+          completed_at?: string | null
+          delivery_id?: string | null
+          errors_count?: number
+          id?: string
+          ref?: string | null
+          repo_full_name?: string | null
+          report?: Json
+          source?: string
+          status?: string
+          triggered_at?: string
+          warnings_count?: number
+        }
+        Relationships: []
+      }
+      content_versions: {
+        Row: {
+          commit_sha: string | null
+          content_hash: string
+          content_key: string
+          content_type: string
+          id: string
+          imported_at: string
+          payload: Json
+          run_id: string | null
+          source_path: string
+          version_number: number
+        }
+        Insert: {
+          commit_sha?: string | null
+          content_hash: string
+          content_key: string
+          content_type: string
+          id?: string
+          imported_at?: string
+          payload: Json
+          run_id?: string | null
+          source_path: string
+          version_number: number
+        }
+        Update: {
+          commit_sha?: string | null
+          content_hash?: string
+          content_key?: string
+          content_type?: string
+          id?: string
+          imported_at?: string
+          payload?: Json
+          run_id?: string | null
+          source_path?: string
+          version_number?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "content_versions_run_id_fkey"
+            columns: ["run_id"]
+            isOneToOne: false
+            referencedRelation: "content_import_runs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       curator_chat_messages: {
         Row: {
           created_at: string
