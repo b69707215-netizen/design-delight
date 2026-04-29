@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as TeacherDashboardRouteImport } from './routes/teacher-dashboard'
 import { Route as StudentDashboardRouteImport } from './routes/student-dashboard'
 import { Route as ProgramsRouteImport } from './routes/programs'
+import { Route as PaymentHistoryRouteImport } from './routes/payment-history'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as ContactRouteImport } from './routes/contact'
@@ -31,6 +32,11 @@ const StudentDashboardRoute = StudentDashboardRouteImport.update({
 const ProgramsRoute = ProgramsRouteImport.update({
   id: '/programs',
   path: '/programs',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PaymentHistoryRoute = PaymentHistoryRouteImport.update({
+  id: '/payment-history',
+  path: '/payment-history',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LoginRoute = LoginRouteImport.update({
@@ -65,6 +71,7 @@ export interface FileRoutesByFullPath {
   '/contact': typeof ContactRoute
   '/dashboard': typeof DashboardRoute
   '/login': typeof LoginRoute
+  '/payment-history': typeof PaymentHistoryRoute
   '/programs': typeof ProgramsRoute
   '/student-dashboard': typeof StudentDashboardRoute
   '/teacher-dashboard': typeof TeacherDashboardRoute
@@ -75,6 +82,7 @@ export interface FileRoutesByTo {
   '/contact': typeof ContactRoute
   '/dashboard': typeof DashboardRoute
   '/login': typeof LoginRoute
+  '/payment-history': typeof PaymentHistoryRoute
   '/programs': typeof ProgramsRoute
   '/student-dashboard': typeof StudentDashboardRoute
   '/teacher-dashboard': typeof TeacherDashboardRoute
@@ -86,6 +94,7 @@ export interface FileRoutesById {
   '/contact': typeof ContactRoute
   '/dashboard': typeof DashboardRoute
   '/login': typeof LoginRoute
+  '/payment-history': typeof PaymentHistoryRoute
   '/programs': typeof ProgramsRoute
   '/student-dashboard': typeof StudentDashboardRoute
   '/teacher-dashboard': typeof TeacherDashboardRoute
@@ -98,6 +107,7 @@ export interface FileRouteTypes {
     | '/contact'
     | '/dashboard'
     | '/login'
+    | '/payment-history'
     | '/programs'
     | '/student-dashboard'
     | '/teacher-dashboard'
@@ -108,6 +118,7 @@ export interface FileRouteTypes {
     | '/contact'
     | '/dashboard'
     | '/login'
+    | '/payment-history'
     | '/programs'
     | '/student-dashboard'
     | '/teacher-dashboard'
@@ -118,6 +129,7 @@ export interface FileRouteTypes {
     | '/contact'
     | '/dashboard'
     | '/login'
+    | '/payment-history'
     | '/programs'
     | '/student-dashboard'
     | '/teacher-dashboard'
@@ -129,6 +141,7 @@ export interface RootRouteChildren {
   ContactRoute: typeof ContactRoute
   DashboardRoute: typeof DashboardRoute
   LoginRoute: typeof LoginRoute
+  PaymentHistoryRoute: typeof PaymentHistoryRoute
   ProgramsRoute: typeof ProgramsRoute
   StudentDashboardRoute: typeof StudentDashboardRoute
   TeacherDashboardRoute: typeof TeacherDashboardRoute
@@ -155,6 +168,13 @@ declare module '@tanstack/react-router' {
       path: '/programs'
       fullPath: '/programs'
       preLoaderRoute: typeof ProgramsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/payment-history': {
+      id: '/payment-history'
+      path: '/payment-history'
+      fullPath: '/payment-history'
+      preLoaderRoute: typeof PaymentHistoryRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/login': {
@@ -201,6 +221,7 @@ const rootRouteChildren: RootRouteChildren = {
   ContactRoute: ContactRoute,
   DashboardRoute: DashboardRoute,
   LoginRoute: LoginRoute,
+  PaymentHistoryRoute: PaymentHistoryRoute,
   ProgramsRoute: ProgramsRoute,
   StudentDashboardRoute: StudentDashboardRoute,
   TeacherDashboardRoute: TeacherDashboardRoute,
