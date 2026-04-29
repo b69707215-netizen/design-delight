@@ -5,12 +5,12 @@ import { ContactPage } from "@/components/gross-academy";
 export const Route = createFileRoute("/contact")({
   head: () => ({
     meta: [
-      { title: "Запись на урок — Gross Academy" },
+      { title: "Запис на урок — Gross Academy" },
       {
         name: "description",
-        content: "Начните шахматное обучение с персональной консультации и пробного урока.",
+        content: "Почніть шахове навчання з персональної консультації та пробного уроку.",
       },
-      { property: "og:title", content: "Запись на урок — Gross Academy" },
+      { property: "og:title", content: "Запис на урок — Gross Academy" },
       {
         property: "og:description",
         content: "Почніть шахове навчання з персональної консультації та пробного уроку.",
