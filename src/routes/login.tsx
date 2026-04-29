@@ -5,12 +5,12 @@ import { LoginPage } from "@/components/gross-academy";
 export const Route = createFileRoute("/login")({
   head: () => ({
     meta: [
-      { title: "Личный кабинет — Gross Academy" },
-      { name: "description", content: "Вход и регистрация учеников и учителей Gross Academy." },
-      { property: "og:title", content: "Личный кабинет — Gross Academy" },
+      { title: "Особистий кабінет — Gross Academy" },
+      { name: "description", content: "Вхід і реєстрація учнів та вчителів Gross Academy." },
+      { property: "og:title", content: "Особистий кабінет — Gross Academy" },
       {
         property: "og:description",
-        content: "Создайте кабинет ученика или учителя и управляйте профилем.",
+        content: "Створіть кабінет учня або вчителя та керуйте профілем.",
       },
     ],
   }),

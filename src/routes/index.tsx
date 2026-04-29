@@ -5,13 +5,13 @@ import { HomePage } from "@/components/gross-academy";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Gross Academy — шахматная школа" },
+      { title: "Gross Academy — шахова школа" },
       {
         name: "description",
         content:
-          "Обучение шахматам с мастерами спорта, персональными программами и турнирной подготовкой.",
+          "Навчання шахам із майстрами спорту, персональними програмами та турнірною підготовкою.",
       },
-      { property: "og:title", content: "Gross Academy — шахматная школа" },
+      { property: "og:title", content: "Gross Academy — шахова школа" },
       {
         property: "og:description",
         content:

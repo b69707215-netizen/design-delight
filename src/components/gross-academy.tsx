@@ -20,7 +20,7 @@ type Payment = {
   created_at: string;
 };
 
-function localized<T extends { ru: string; en: string }>(value: T, language: Language) {
+function localized<T extends Record<Language, string>>(value: T, language: Language) {
   return value[language];
 }
 
@@ -77,10 +77,10 @@ export function AcademyHeader() {
         <div className="flex items-center gap-2">
           <button
             type="button"
-            onClick={() => setLanguage(language === "ru" ? "en" : "ru")}
+            onClick={() => setLanguage(language === "uk" ? "en" : "uk")}
             className="rounded-md border border-royal-border bg-royal-surface px-3 py-2 text-xs font-semibold text-cream shadow-royal transition-colors hover:border-gold"
           >
-            {language === "ru" ? "EN" : "RU"}
+            {language === "uk" ? "EN" : "UK"}
           </button>
           <Button asChild variant="royalOutline" size="sm">
             <Link to="/login">{t.nav.login}</Link>
@@ -104,7 +104,7 @@ export function AcademyLayout({ children }: { children: ReactNode }) {
           alert(
             language === "en"
               ? "AI assistant: Hi! How can I help with GROSS ACADEMY?"
-              : "AI помощник: Привет! Как я могу помочь с GROSS ACADEMY?",
+              : "AI помічник: Привіт! Як я можу допомогти з GROSS ACADEMY?",
           )
         }
         aria-label="Open chat"
@@ -197,7 +197,7 @@ export function ProgramsPage() {
                 {localized(program.text, language)}
               </p>
               <Button asChild variant="royal" className="mt-7 w-full">
-                <Link to="/login">{language === "en" ? "Enroll" : "Записаться"}</Link>
+                <Link to="/login">{language === "en" ? "Enroll" : "Записатися"}</Link>
               </Button>
             </article>
           ))}
@@ -279,17 +279,17 @@ export function LoginPage() {
           error: "Something went wrong. Check details and try again.",
         }
       : {
-          title: "Личный кабинет",
-          subtitle: "Войдите или создайте кабинет ученика/учителя.",
-          signin: "Войти",
-          signup: "Создать аккаунт",
+          title: "Особистий кабінет",
+          subtitle: "Увійдіть або створіть кабінет учня/вчителя.",
+          signin: "Увійти",
+          signup: "Створити акаунт",
           password: "Пароль",
-          fullName: "Полное имя",
-          student: "Ученик",
-          teacher: "Учитель",
-          google: "Продолжить с Google",
-          success: "Проверьте почту, чтобы подтвердить регистрацию.",
-          error: "Что-то пошло не так. Проверьте данные и попробуйте снова.",
+          fullName: "Повне ім’я",
+          student: "Учень",
+          teacher: "Вчитель",
+          google: "Продовжити з Google",
+          success: "Перевірте пошту, щоб підтвердити реєстрацію.",
+          error: "Щось пішло не так. Перевірте дані та спробуйте ще раз.",
         };
 
   async function saveProfile(userId: string) {
@@ -324,7 +324,10 @@ export function LoginPage() {
         const { data, error } = await supabase.auth.signUp({
           email,
           password,
-          options: { emailRedirectTo: window.location.origin + "/dashboard" },
+          options: {
+            emailRedirectTo: window.location.origin + "/dashboard",
+            data: { full_name: fullName.trim(), role, preferred_language: language },
+          },
         });
         if (error) throw error;
         if (data.user && data.session) await saveProfile(data.user.id);
@@ -352,10 +355,10 @@ export function LoginPage() {
           <p className="mt-6 text-lg leading-8 text-warm-muted">{copy.subtitle}</p>
           <button
             type="button"
-            onClick={() => setLanguage(language === "ru" ? "en" : "ru")}
+            onClick={() => setLanguage(language === "uk" ? "en" : "uk")}
             className="mt-8 rounded-md border border-royal-border bg-royal-surface px-4 py-2 text-sm font-semibold text-cream shadow-royal hover:border-gold"
           >
-            {language === "ru" ? "English" : "Русский"}
+            {language === "uk" ? "English" : "Українська"}
           </button>
         </div>
         <form
@@ -452,6 +455,7 @@ export function DashboardPage() {
   const [fullName, setFullName] = useState("");
   const [role, setRole] = useState<Role>("student");
   const [payments, setPayments] = useState<Payment[]>([]);
+  const [profileMessage, setProfileMessage] = useState("");
   const [loading, setLoading] = useState(true);
   const copy =
     language === "en"
@@ -463,6 +467,7 @@ export function DashboardPage() {
           role: "Role",
           language: "Language",
           save: "Save profile",
+          saved: "Profile changes saved.",
           logout: "Log out",
           empty: "Payments will appear here after checkout.",
           signin: "Sign in to view your cabinet.",
@@ -472,19 +477,20 @@ export function DashboardPage() {
           status: "Status",
         }
       : {
-          title: "Мой кабинет",
-          profile: "Профиль",
-          payments: "История оплат",
-          name: "Полное имя",
+          title: "Мій кабінет",
+          profile: "Профіль",
+          payments: "Історія оплат",
+          name: "Повне ім’я",
           role: "Роль",
-          language: "Язык",
-          save: "Сохранить профиль",
-          logout: "Выйти",
-          empty: "Оплаты появятся здесь после оформления заказа.",
-          signin: "Войдите, чтобы открыть кабинет.",
-          student: "Ученик",
-          teacher: "Учитель",
-          amount: "Сумма",
+          language: "Мова",
+          save: "Зберегти профіль",
+          saved: "Зміни профілю збережено.",
+          logout: "Вийти",
+          empty: "Оплати з’являться тут після оформлення замовлення.",
+          signin: "Увійдіть, щоб відкрити кабінет.",
+          student: "Учень",
+          teacher: "Вчитель",
+          amount: "Сума",
           status: "Статус",
         };
 
@@ -513,19 +519,28 @@ export function DashboardPage() {
           .order("created_at", { ascending: false }),
       ]);
       const profile = profiles?.[0];
+      const metadataLanguage =
+        currentUser.user_metadata?.preferred_language === "en" ? "en" : "uk";
+      const metadataRole = currentUser.user_metadata?.role === "teacher" ? "teacher" : "student";
       if (profile) {
         setFullName(profile.full_name);
-        if (profile.preferred_language === "en" || profile.preferred_language === "ru")
+        if (profile.preferred_language === "en" || profile.preferred_language === "uk")
           setLanguage(profile.preferred_language);
+        if (profile.preferred_language === "ru") setLanguage("uk");
       } else {
         await supabase.from("profiles").insert({
           user_id: currentUser.id,
-          full_name: currentUser.email ?? "",
-          preferred_language: language,
+          full_name: currentUser.user_metadata?.full_name || currentUser.email || "",
+          preferred_language: metadataLanguage,
         });
-        setFullName(currentUser.email ?? "");
+        setFullName(currentUser.user_metadata?.full_name || currentUser.email || "");
+        setLanguage(metadataLanguage);
       }
       if (roles?.[0]?.role === "teacher" || roles?.[0]?.role === "student") setRole(roles[0].role);
+      else {
+        await supabase.from("user_roles").insert({ user_id: currentUser.id, role: metadataRole });
+        setRole(metadataRole);
+      }
       setPayments((history ?? []) as Payment[]);
       setLoading(false);
     }
@@ -533,7 +548,7 @@ export function DashboardPage() {
     return () => {
       mounted = false;
     };
-  }, [language, setLanguage]);
+  }, [setLanguage]);
 
   const roleLabel = useMemo(
     () => (role === "teacher" ? copy.teacher : copy.student),
@@ -543,6 +558,8 @@ export function DashboardPage() {
   async function saveProfile(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!user) return;
+    setProfileMessage("");
+    const name = fullName.trim() || user.email || "";
     const { data: existing } = await supabase
       .from("profiles")
       .select("id")
@@ -552,14 +569,16 @@ export function DashboardPage() {
     if (existing)
       await supabase
         .from("profiles")
-        .update({ full_name: fullName, preferred_language: language })
+        .update({ full_name: name, preferred_language: language })
         .eq("id", existing.id);
     else
       await supabase
         .from("profiles")
-        .insert({ user_id: user.id, full_name: fullName, preferred_language: language });
+        .insert({ user_id: user.id, full_name: name, preferred_language: language });
     await supabase.from("user_roles").delete().eq("user_id", user.id);
     await supabase.from("user_roles").insert({ user_id: user.id, role });
+    setFullName(name);
+    setProfileMessage(copy.saved);
   }
 
   async function logout() {
@@ -609,10 +628,15 @@ export function DashboardPage() {
                   onChange={(event) => setLanguage(event.target.value as Language)}
                   className="mt-2 h-12 w-full rounded-md border border-royal-border bg-input px-4 text-cream focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                 >
-                  <option value="ru">Русский</option>
+                  <option value="uk">Українська</option>
                   <option value="en">English</option>
                 </select>
               </label>
+              {profileMessage && (
+                <p className="mt-5 rounded-md border border-royal-border bg-royal-surface p-4 text-sm text-warm-muted">
+                  {profileMessage}
+                </p>
+              )}
               <Button type="submit" variant="royal" size="lg" className="mt-8 w-full">
                 {copy.save}
               </Button>
@@ -751,7 +775,7 @@ function Footer() {
       <h2 className="text-2xl font-semibold tracking-[0.18em] text-gold">GROSS ACADEMY</h2>
       <p className="mt-3">{translations[language].footer}</p>
       <p className="mt-6 text-xs">
-        © 2026 Gross Academy. {language === "en" ? "All rights reserved." : "Все права защищены."}
+        © 2026 Gross Academy. {language === "en" ? "All rights reserved." : "Усі права захищені."}
       </p>
     </footer>
   );

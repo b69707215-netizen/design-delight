@@ -1,15 +1,17 @@
-export type Language = "ru" | "en";
+export type Language = "uk" | "en";
+
+type LocalizedText = Record<Language, string>;
 
 export const programs = [
   {
     mark: "01",
     slug: "basic-start",
     amount: 3600,
-    title: { ru: "Базовый старт", en: "Basic Start" },
-    lessons: { ru: "8 уроков", en: "8 lessons" },
-    price: { ru: "3600 грн", en: "UAH 3,600" },
+    title: { uk: "Базовий старт", en: "Basic Start" },
+    lessons: { uk: "8 уроків", en: "8 lessons" },
+    price: { uk: "3600 грн", en: "UAH 3,600" },
     text: {
-      ru: "Правила, базовая стратегия, тактика и первые уверенные партии.",
+      uk: "Правила, базова стратегія, тактика та перші впевнені партії.",
       en: "Rules, core strategy, tactics, and the first confident games.",
     },
   },
@@ -17,11 +19,11 @@ export const programs = [
     mark: "02",
     slug: "first-move",
     amount: 5400,
-    title: { ru: "Первый ход", en: "First Move" },
-    lessons: { ru: "12 уроков", en: "12 lessons" },
-    price: { ru: "5400 грн", en: "UAH 5,400" },
+    title: { uk: "Перший хід", en: "First Move" },
+    lessons: { uk: "12 уроків", en: "12 lessons" },
+    price: { uk: "5400 грн", en: "UAH 5,400" },
     text: {
-      ru: "Дебюты, позиционная логика и регулярная практика с наставником.",
+      uk: "Дебюти, позиційна логіка та регулярна практика з наставником.",
       en: "Openings, positional logic, and regular practice with a mentor.",
     },
   },
@@ -29,11 +31,11 @@ export const programs = [
     mark: "03",
     slug: "confident-strategist",
     amount: 7000,
-    title: { ru: "Уверенный стратег", en: "Confident Strategist" },
-    lessons: { ru: "16 уроков", en: "16 lessons" },
-    price: { ru: "7000 грн", en: "UAH 7,000" },
+    title: { uk: "Впевнений стратег", en: "Confident Strategist" },
+    lessons: { uk: "16 уроків", en: "16 lessons" },
+    price: { uk: "7000 грн", en: "UAH 7,000" },
     text: {
-      ru: "Глубокий анализ дебюта, миттельшпиля и техники эндшпиля.",
+      uk: "Глибокий аналіз дебюту, мітельшпілю та техніки ендшпілю.",
       en: "Deeper opening, middlegame, and endgame technique analysis.",
     },
   },
@@ -41,11 +43,11 @@ export const programs = [
     mark: "04",
     slug: "tournament-boost",
     amount: 7500,
-    title: { ru: "Турнирный форсаж", en: "Tournament Boost" },
-    lessons: { ru: "16 уроков", en: "16 lessons" },
-    price: { ru: "7500 грн", en: "UAH 7,500" },
+    title: { uk: "Турнірний форсаж", en: "Tournament Boost" },
+    lessons: { uk: "16 уроків", en: "16 lessons" },
+    price: { uk: "7500 грн", en: "UAH 7,500" },
     text: {
-      ru: "Подготовка к турнирам, разбор партий и психология игры.",
+      uk: "Підготовка до турнірів, розбір партій та психологія гри.",
       en: "Tournament preparation, game review, and chess psychology.",
     },
   },
@@ -53,76 +55,69 @@ export const programs = [
     mark: "05",
     slug: "grandmaster-path",
     amount: 10500,
-    title: { ru: "Путь гроссмейстера", en: "Grandmaster Path" },
-    lessons: { ru: "24 урока", en: "24 lessons" },
-    price: { ru: "10500 грн", en: "UAH 10,500" },
+    title: { uk: "Шлях гросмейстера", en: "Grandmaster Path" },
+    lessons: { uk: "24 уроки", en: "24 lessons" },
+    price: { uk: "10500 грн", en: "UAH 10,500" },
     text: {
-      ru: "Элитная программа с персональным менторством и аналитикой.",
+      uk: "Елітна програма з персональним менторством та аналітикою.",
       en: "Elite training with personal mentorship and advanced analytics.",
     },
   },
-] as const;
+] as const satisfies ReadonlyArray<{
+  mark: string;
+  slug: string;
+  amount: number;
+  title: LocalizedText;
+  lessons: LocalizedText;
+  price: LocalizedText;
+  text: LocalizedText;
+}>;
 
 export const translations = {
-  ru: {
+  uk: {
     nav: {
-      home: "Главная",
-      programs: "Программы",
-      about: "О нас",
-      contact: "Контакт",
-      cabinet: "Кабинет",
-      login: "Войти",
+      home: "Головна",
+      programs: "Програми",
+      about: "Про нас",
+      contact: "Контакти",
+      cabinet: "Кабінет",
+      login: "Увійти",
     },
-    heroKicker: "Твой путь к гроссмейстерскому уровню",
+    heroKicker: "Твій шлях до гросмейстерського рівня",
     heroText:
-      "Учись стратегии у мастеров спорта, думай на несколько ходов вперед и побеждай уверенно.",
-    ctaTrial: "Записаться на урок",
-    ctaPrograms: "Посмотреть программы",
+      "Навчайся стратегії у майстрів спорту, думай на кілька ходів уперед і перемагай впевнено.",
+    ctaTrial: "Записатися на урок",
+    ctaPrograms: "Переглянути програми",
     audiences: [
-      [
-        "♙",
-        "Для детей",
-        "Превращаем обучение в интеллектуальное приключение, которое развивает внимание и мышление.",
-      ],
-      [
-        "♘",
-        "Для взрослых",
-        "Помогаем начать с нуля или вернуть форму через системный, спокойный прогресс.",
-      ],
-      [
-        "♕",
-        "Для профи",
-        "Даём инструменты серьёзной подготовки: анализ, репертуар и турнирную дисциплину.",
-      ],
+      ["♙", "Для дітей", "Перетворюємо навчання на інтелектуальну пригоду, що розвиває увагу й мислення."],
+      ["♘", "Для дорослих", "Допомагаємо почати з нуля або повернути форму через системний, спокійний прогрес."],
+      ["♕", "Для профі", "Даємо інструменти серйозної підготовки: аналіз, репертуар і турнірну дисципліну."],
     ],
-    programsKicker: "Обучение",
-    programsTitle: "Программы шахматного роста",
-    chooseProgram: "Выберите программу",
-    aboutKicker: "Об академии",
-    aboutTitle: "Мы не учим просто передвигать фигуры",
+    programsKicker: "Навчання",
+    programsTitle: "Програми шахового росту",
+    chooseProgram: "Оберіть програму",
+    aboutKicker: "Про академію",
+    aboutTitle: "Ми не вчимо просто пересувати фігури",
     aboutText:
-      "Gross Academy — это экосистема интеллектуального развития, где шахматы становятся языком стратегического мышления, дисциплины и уверенных решений.",
+      "Gross Academy — це екосистема інтелектуального розвитку, де шахи стають мовою стратегічного мислення, дисципліни й упевнених рішень.",
     advantages: [
-      ["Персональная стратегия", "Адаптируем темп, цели и план занятий под каждого ученика."],
-      [
-        "Современная экосистема",
-        "Объединяем классическую школу, интерактивную практику и анализ партий.",
-      ],
-      ["Глубокая аналитика", "Показываем не только ошибки, но и логику сильных решений."],
+      ["Персональна стратегія", "Адаптуємо темп, цілі та план занять під кожного учня."],
+      ["Сучасна екосистема", "Поєднуємо класичну школу, інтерактивну практику та аналіз партій."],
+      ["Глибока аналітика", "Показуємо не лише помилки, а й логіку сильних рішень."],
     ],
-    contactKicker: "Запись",
-    contactTitle: "Оставь свои контакты",
-    trialLesson: "Пробный урок",
+    contactKicker: "Запис",
+    contactTitle: "Залиш свої контакти",
+    trialLesson: "Пробний урок",
     form: {
-      program: "Программа",
-      name: "Имя",
-      surname: "Фамилия",
-      email: "Эл. почта",
+      program: "Програма",
+      name: "Ім’я",
+      surname: "Прізвище",
+      email: "Ел. пошта",
       phone: "Телефон",
-      submit: "Отправить",
-      success: "Спасибо за заявку! Мы скоро свяжемся с вами.",
+      submit: "Надіслати",
+      success: "Дякуємо за заявку! Ми скоро зв’яжемося з вами.",
     },
-    footer: "Твой путь к гроссмейстерскому уровню",
+    footer: "Твій шлях до гросмейстерського рівня",
   },
   en: {
     nav: {
@@ -139,21 +134,9 @@ export const translations = {
     ctaTrial: "Book a lesson",
     ctaPrograms: "View programs",
     audiences: [
-      [
-        "♙",
-        "For children",
-        "We turn learning into an intellectual adventure that builds focus and thinking.",
-      ],
-      [
-        "♘",
-        "For adults",
-        "Start from scratch or return to form through steady, structured progress.",
-      ],
-      [
-        "♕",
-        "For advanced players",
-        "Get serious tools: analysis, repertoire work, and tournament discipline.",
-      ],
+      ["♙", "For children", "We turn learning into an intellectual adventure that builds focus and thinking."],
+      ["♘", "For adults", "Start from scratch or return to form through steady, structured progress."],
+      ["♕", "For advanced players", "Get serious tools: analysis, repertoire work, and tournament discipline."],
     ],
     programsKicker: "Training",
     programsTitle: "Chess growth programs",
@@ -164,10 +147,7 @@ export const translations = {
       "Gross Academy is an intellectual development ecosystem where chess becomes a language of strategic thinking, discipline, and confident decisions.",
     advantages: [
       ["Personal strategy", "We adapt pace, goals, and lesson plans to every student."],
-      [
-        "Modern ecosystem",
-        "We combine classical training, interactive practice, and game analysis.",
-      ],
+      ["Modern ecosystem", "We combine classical training, interactive practice, and game analysis."],
       ["Deep analytics", "We show not only mistakes, but the logic behind strong decisions."],
     ],
     contactKicker: "Enrollment",
