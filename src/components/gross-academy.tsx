@@ -664,7 +664,9 @@ export function DashboardPage({ scope = "auto" }: { scope?: DashboardScope }) {
                 {copy.save}
               </Button>
               <Button asChild variant="royalOutline" size="lg" className="mt-3 w-full">
-                <Link to="/payment-history">{copy.openPayments}</Link>
+                <Link to="/payment-history" search={{ course: "", status: "all" }}>
+                  {copy.openPayments}
+                </Link>
               </Button>
               <Button
                 type="button"
