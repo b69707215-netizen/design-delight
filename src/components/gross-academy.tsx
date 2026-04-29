@@ -14,6 +14,7 @@ export type PaymentStatusFilter = "all" | "paid" | "canceled" | "pending";
 type Payment = {
   id: string;
   program_title: string;
+  lessons_purchased: number;
   amount: number;
   currency: string;
   status: string;
@@ -495,6 +496,7 @@ export function DashboardPage({ scope = "auto" }: { scope?: DashboardScope }) {
           student: "Student",
           teacher: "Teacher",
           amount: "Amount",
+          lessons: "Purchased lessons",
           status: "Status",
         }
       : {
@@ -514,6 +516,7 @@ export function DashboardPage({ scope = "auto" }: { scope?: DashboardScope }) {
           student: "Учень",
           teacher: "Вчитель",
           amount: "Сума",
+          lessons: "Куплено уроків",
           status: "Статус",
         };
 
@@ -537,7 +540,7 @@ export function DashboardPage({ scope = "auto" }: { scope?: DashboardScope }) {
         supabase.from("user_roles").select("role").eq("user_id", currentUser.id).limit(1),
         supabase
           .from("payment_history")
-          .select("id, program_title, amount, currency, status, provider, paid_at, created_at")
+          .select("id, program_title, lessons_purchased, amount, currency, status, provider, paid_at, created_at")
           .eq("user_id", currentUser.id)
           .order("created_at", { ascending: false }),
       ]);
@@ -707,7 +710,7 @@ export function DashboardPage({ scope = "auto" }: { scope?: DashboardScope }) {
                         <span className="text-sm font-semibold text-gold">{payment.status}</span>
                       </div>
                       <p className="mt-3 text-sm text-warm-muted">
-                        {copy.amount}: {payment.amount} {payment.currency} · {payment.provider}
+                        {copy.amount}: {payment.amount} {payment.currency} · {copy.lessons}: {payment.lessons_purchased} · {payment.provider}
                       </p>
                     </article>
                   ))
@@ -745,6 +748,7 @@ export function PaymentHistoryPage({
           canceled: "Canceled",
           pending: "Pending",
           amount: "Amount",
+          lessons: "Purchased lessons",
           empty: "No payments match these filters.",
           signin: "Sign in to view your payment history.",
           back: "Back to cabinet",
@@ -760,6 +764,7 @@ export function PaymentHistoryPage({
           canceled: "Скасовано",
           pending: "В очікуванні",
           amount: "Сума",
+          lessons: "Куплено уроків",
           empty: "За цими фільтрами оплат немає.",
           signin: "Увійдіть, щоб переглянути історію оплат.",
           back: "Назад до кабінету",
@@ -778,7 +783,7 @@ export function PaymentHistoryPage({
       }
       const { data } = await supabase
         .from("payment_history")
-        .select("id, program_title, amount, currency, status, provider, paid_at, created_at")
+        .select("id, program_title, lessons_purchased, amount, currency, status, provider, paid_at, created_at")
         .eq("user_id", currentUser.id)
         .order("created_at", { ascending: false });
       if (!mounted) return;
@@ -875,7 +880,7 @@ export function PaymentHistoryPage({
                         <span className="text-sm font-semibold text-gold">{copy[normalized]}</span>
                       </div>
                       <p className="mt-3 text-sm text-warm-muted">
-                        {copy.amount}: {payment.amount} {payment.currency} · {payment.provider}
+                        {copy.amount}: {payment.amount} {payment.currency} · {copy.lessons}: {payment.lessons_purchased} · {payment.provider}
                       </p>
                     </article>
                   );
