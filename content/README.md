@@ -30,3 +30,11 @@
 
 - Programs: `content/programs.json`
 - Cards: `content/cards.json`
+
+## Команда проверки импорта
+
+```bash
+bun run import:content
+```
+
+Команда читает `content/programs.json`, дополнительные JSON-файлы из `content/programs/` при наличии, `content/cards.json` и MDX-файлы из `content/cards/`, затем выводит отчёт по успешным импортам, предупреждениям и ошибкам.
